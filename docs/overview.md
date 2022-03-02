@@ -1,5 +1,7 @@
 # Multi-Accumulator Machine
 
+## Introduction
+
 The multi-accumulator machine (*MAM*) is an machine- and *instruction set architecture* (ISA) that fits into the general category of explicitly-parallel VLIW machines. MAM goes somewhat further than typical VLIW architectures and ISA's by directly driving multiple mostly-independent execution units from execution-unit-specific (sub-)operations within a single *instruction*. Each (hardware) execution unit is driven by a specific *slot* in the (long) instruction. Each slot within the instruction 'word' is 8 bits; the instruction comprises a collection of these 8-bit operations and the semantics of instruction execution is that all (non-NOP) operands in the instruction word are executed in parallel.
 
 In general a specific MAM *model* comprises a particular collection of execution units of various types - a typical model would include some number of *arithmetic* units, some *memory* (load/store) units and a *flow-control* (branch/call et al) unit.
@@ -14,4 +16,19 @@ On the other hand, MAM is intended to be (sensibly) implemented as a (very) shal
 
 In summary, the Multi-Accumulator Machine (MAM) is an explicitly parallel very-wide VLIW implementation with very simple instruction decoding, (almost) independent execution units, no data/register hazards, a dense instruction encoding format even with very wide parallelism and deliberate support for conditional and speculative execution. As such it is intended to provide high general-purpose performance with a very simple and low power circuit design - no out-of-order, no register-rewriting, mostly-avoidance of branch prediction through speculative execution support. Like all explicitly-parallel architectures (and even explicitly-speculative architectures - are there any?), good compiler support is absolutely critical to effective performance in practice.
 
+## Instruction Encoding
+
+As described in the [Introduction](##Introduction), each MAM instruction comprises an ordered collection of operations including one operation for each execution unit of the specific MAM *model*. For expository purposes we will assume a MAM model comprising eight (8) *arithmetic units*, four (4) *memory units* and a single *control unit* for a total of thirteen (13) execution units. This choice of execution units is somewhat deliberate as will become clearer in the following. It should be clear that the MAM specification is not prescriptive about possible models - in this sense MAM can be seen as a framework for defining a family of related CPU architectures. For example, we could also choose to implement a minimal MAM model comprising one (1) arithmetic unit, one (1) memory unit and one (1) control unit. In general a MAM model *MUST* include at least one arithmetic unit, at least one memory unit and exactly one control unit.
+
+Although the MAM specification is not prescriptive, a MAM model can include padding *slots* in the instruction format in order that the instruction word length is aligned to natural machine word lengths - typically but not necessarily a power of two. For our expository example comprising thirteen execution units in total we will choose to pad each instruction to exactly sixteen slots. Note that each slot is eight bits wide, hence our instruction word is 128-bits. We can denote this MAM model as MAM/8a/4m/16 for short - it is not necessary to include the control unit since there is always exactly one in all (valid) MAM models.
+
+
+
+## Execution Units
+
+### Arithmetic Units
+
+### Memory Units
+
+### Control Unit
 
