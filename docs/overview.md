@@ -16,13 +16,75 @@ On the other hand, MAM is intended to be (sensibly) implemented as a (very) shal
 
 In summary, the Multi-Accumulator Machine (MAM) is an explicitly parallel very-wide VLIW implementation with very simple instruction decoding, (almost) independent execution units, no data/register hazards, a dense instruction encoding format even with very wide parallelism and deliberate support for conditional and speculative execution. As such it is intended to provide high general-purpose performance with a very simple and low power circuit design - no out-of-order, no register-rewriting, mostly-avoidance of branch prediction through speculative execution support. Like all explicitly-parallel architectures (and even explicitly-speculative architectures - are there any?), good compiler support is absolutely critical to effective performance in practice.
 
-## Instruction Encoding
+## MAM Instruction Encoding
 
-As described in the [Introduction](##Introduction), each MAM instruction comprises an ordered collection of operations including one operation for each execution unit of the specific MAM *model*. For expository purposes we will assume a MAM model comprising eight (8) *arithmetic units*, four (4) *memory units* and a single *control unit* for a total of thirteen (13) execution units. This choice of execution units is somewhat deliberate as will become clearer in the following. It should be clear that the MAM specification is not prescriptive about possible models - in this sense MAM can be seen as a framework for defining a family of related CPU architectures. For example, we could also choose to implement a minimal MAM model comprising one (1) arithmetic unit, one (1) memory unit and one (1) control unit. In general a MAM model *MUST* include at least one arithmetic unit, at least one memory unit and exactly one control unit.
+As described in the [Introduction](#introduction), each MAM instruction comprises an ordered collection of operations including one operation for each execution unit of the specific MAM *model*. For expository purposes we will assume a MAM model comprising eight (8) *arithmetic units*, four (4) *memory units* and a single *control unit* for a total of thirteen (13) execution units. This choice of execution units is somewhat deliberate as will become clearer in the following. It should be clear that the MAM specification is not prescriptive about possible models - in this sense MAM can be seen as a framework for defining a family of related CPU architectures. For example, we could also choose to implement a minimal MAM model comprising one (1) arithmetic unit, one (1) memory unit and one (1) control unit. In general a MAM model *MUST* include at least one arithmetic unit, at least one memory unit and exactly one control unit.
 
-Although the MAM specification is not prescriptive, a MAM model can include padding *slots* in the instruction format in order that the instruction word length is aligned to natural machine word lengths - typically but not necessarily a power of two. For our expository example comprising thirteen execution units in total we will choose to pad each instruction to exactly sixteen slots. Note that each slot is eight bits wide, hence our instruction word is 128-bits. We can denote this MAM model as MAM/8a/4m/16 for short - it is not necessary to include the control unit since there is always exactly one in all (valid) MAM models.
+Although the MAM specification is not prescriptive, a MAM model can include idle *padding units* in the instruction format in order that the instruction word length is aligned to natural machine word lengths - typically a power of two. For our expository example comprising thirteen execution units in total we will choose to pad each instruction to exactly sixteen slots. Note that each slot is eight bits wide, hence our instruction word is 128-bits. We can denote this MAM model as *MAM/8a/4m/16* for short - it is not necessary to include the control unit since there is always exactly one in all (valid or useful) MAM models.
 
+Again to reiterate, each byte of the instruction word contains an operation for a specific execution unit where there is fixed mapping from byte index in the instruction word to execution unit. Phrased differently a specific byte position in any MAM instruction will always drive the same execution unit. As mentioned previously each byte position is alternatively known as a(n instruction) *slot* and slightly more loosely the *slot* number will refer to the instruction operation position as well as the corresponding execution unit. Taking our expository MAM/8a/4m/16 model, in order to exactly characterise the model we additionally need to specify exactly which execution unit is driven by each slot. For reasons that will become more apparent in the following we will choose to lay out our slots so that the first half of the instruction word comprises exactly four (4) arithmetic units, two (2) memory units, the control unit and a padding unit. Hence slots zero - note zero based numbering - through three will be arithmetic units, slots four and five are memory units, slot six is the control unit and slot seven is an idle padding slot. The remaining execution units are then assigned to slots eight through eleven (remaining arithmetic units), slots twelve and thirteen (memory units) and two remaining padding slots, fourteen and fifteen. We will similarly denote this specific slot layout choice as *MAM/4a/2m/c/./4a/2m/2./16*. Note that we have described our MAM model as both MAM/8a/4m/16 and MAM/4a/2m/c/./4a/2m/2./16 and it is assumed that context will make it clear whether the model characterisation includes slot layout or not.
 
+Finally, although we have not yet elaborated the 8-bit operation sets for each kind of execution unit, it should be clear that the (binary) machine code instruction format is simply the per-slot 8-bit operations collected into a long instruction word. Slot 0 is driven by the lowest memory-address byte of the instruction, slot 1 is driven by the second lowest memory-address byte, etc. - in other words the instruction encoding follows the architecture's endianness. Padding units *SHOULD* always use 0x00, the zero byte, as their slot operation; similarly the zero byte 0x00 is used in all active execution unit types as the *no-operation* (NOP) operation code. As is common practice in machine code text representation we use a sequence of hexadecimal byte values to represent a MAM instruction in order from slot 0 upwards.
+
+For example, here is a typical machine code representation of a sequence of our *MAM/4a/2m/c/./4a/2m/2./16* model, with memory address on the left:
+
+```
+0x0000100000: 01 FA 00 3D 00 3B 00 00 E2 00 00 00 00 12 00 00
+0x0000100010: 02 3A 00 00 2B 00 00 00 00 00 00 00 00 00 00 00
+0x0000100020: 23 3A 00 00 2A 00 F0 00 00 00 00 00 00 00 00 00
+```
+
+At this point of the document we have not defined op-codes other than NOP (00) for any of the execution unit types. However, we can make some high-level observations about the various execution units' activity in this sequence of instructions. Firstly slots 0 to 3 (leftmost bytes in each instruction) are arithmetic units per the model. Arithmetic units/slots 0 and 1 are active in each instruction, arithmetic unit/slot 2 is idle throughout, and arithmetic unit/slot 3 is active in the first instruction and otherwise idle. Slots 7, 14 and 15 are padding/idle slots and contain the NOP operation 00 throughout. Memory units/slots 4, 5 and 13 are mostly idle and memory unit/slot 12 is completely idle. The control unit is idle in the first two instructions and then has an active op in the 3rd instruction, perhaps a branch.
+
+### MAM Instruction Assembler Mnemonics
+
+MAM instructions comprise a set of operations, one operation for each execution unit or slot. As is standard practice the operations implemented by the various execution unit types have human-readable *assembler* mnemonics. The human-readable assembler mnemonic for a MAM instruction is simply the comma-separated collection of operations of all of the execution units/slots, where each slot operation is labeled by its slot number and execution unit type for clarity. Although we have not yet defined the operations implemented by each execution unit type, nor their mnemonics, the sample instruction machine code sequence above is represented mnemonically as follows:
+
+```
+0x0000100000: 0a.neg, 1a.add r2, 2a.nop, 3a.add a2, 4m.nop, 5m.ld8 r2, 6c.nop, 7p.nop, 8a.nop, 9a.sub r2, 10a.nop 11a.nop, 12m.nop 13m.st64s, 14p.nop, 15p.nop
+0x0000100010: 0a.mask16, 1a.sub r2, 2a.nop 3a.nop, 4m.rd r3, 5m.nop 6c.nop 7p.nop 8a.nop, 9a.nop 10a.nop 11a.nop 12m.nop, 13m.nop, 14p.nop, 15p.nop
+0x0000100020: 0a.save r3, 1a.sub r2, 2a.nop, 3a.nop, 4m.rd r2, 5m.nop, 6c.br 7p.nop, 8a.nop, 9a.nop, 10a.nop, 11a.nop, 12m.nop, 13m.nop, 14p.nop, 15p.nop
+```
+
+It is standard practice to omit all nop's from the assembler mnemonics, so the above assembler is typically abbreviated to the following:
+
+```
+0x0000100000: 0a.neg, 1a.add r2, 3a.add a2, 5m.ld8 r2, 9a.sub r2, 13m.st64s
+0x0000100010: 0a.mask16, 1a.sub r2, 4m.rd r3
+0x0000100020: 0a.save r3, 1a.sub r2, 4m.rd r2, 6c.br
+```
+
+### MAM Compact Instruction Encoding Format
+
+The raw MAM instruction encoding described above suffers from typical VLIW *code bloat* of idle execution units consuming a full byte of instruction memory for no useful purpose. MAM architecture includes an alternative instruction encoding that is intended to mitigate the problem of machine code bloat. This *compact instruction encoding* is part of the MAM architecture and hence supported in hardware, typically as an extra instruction decode stage in the cpu pipeline. As such, a MAM hardware chip is capable of executing both raw instruction encoding and compact instruction encoding; the instruction format currently being executed is part of the hardware execution state, and transitions between raw and compact instruction encoding are enforced by explicit control unit instructions, or sometimes implicit mode change on return from function-call, or operating-system *trap*.
+
+MAM compact instruction encoding comprises a *header* which defines which execution units are active in the instruction, and a *body* which includes the operation codes of only the active execution units. The compact instruction encoding *header* is a variable-length bitmap of active execution units. Each byte (8 bits) of the *header* includes an *active/inactive* bit for seven (7) of the execution units, and a *continuation* bit which indicates, when set, that there is at least one additional *header* byte. The *continuation* bit is the high bit of the header - i.e. bit 0x80; the low seven bits represent the *active/inactive* bits for seven execution units, from low (0x01) bit to highest (0x40) bit in execution unit/slot order.
+
+Following the *header*, the active slot operations follow in slot order to form the *body* - it should be fairly clear the the body length in bytes corresponds exactly to the number of active (i.e. non-nop) operations in the instruction.
+
+Let's take the example MAM instruction sequence above and represent it as *MAM compact instruction encoding* machine code format. Note that we have three instructions. The first instruction has six active execution units, namely 0a, 1a, 3a, 5m, 8a and 13m. Note that the first four active slots are covered by the first *header* byte; however we need an additional header byte to cover active units 8a and 14m. Accordingly the header comprises two bytes where the first byte has the continuation bit (0x80) set, and then also has bits 0 (0x01), 1 (0x02), 3 (0x08), and 5 (0x20) set, giving us a first header byte of 0xab, or more clearly as the binary 0b10101011. The second header byte covers execution units eight (8) through thirteen (13) which covers the remaining two active slots, 8a and 13m. Accordingly the second header byte has its *continuation* bit clear and has bit 0 (0x01) and bit 6 (0x40) set to represent the active slots, giving us a second header byte value of 0x41, or binary 0b01000001.
+
+The compact encoding body then comprises only the active slot operations, given us the following machine code representation:
+
+```
+0x000020000000 AB 41 01 FA 3D 3B E2 12
+0x000020000008 ...
+```
+
+The remaining two instructions have active slots only in the first seven execution units and hence require just a single header byte. Here is the full compact machine code for the three instructions:
+
+```
+0x000020000000 AB 41 01 FA 3D 3B E2 12
+0x000020000008 13 02 3A 2B
+0x00002000000C 93 23 3A 2A F0
+0x000020000011 ...
+```
+
+Note that the raw machine code encoding requires 48 bytes, whereas the compact machine code encoding requires only 17 bytes.
+
+MAM assembler mnemonic representation uses the same presentation for both raw machine code and compact machine code - it is obvious from the context which machine code format is being used.
+
+Lastly the specific choices for execution unit slots in the MAM model *MAM/4a/2m/c/./4a/2m/2./16* should now be clear. In particular we have a full set of execution unit types in the first seven slots, so non-dense code can mostly be represented with a single header byte. Of course it is up to the code compiler to emit machine code that mostly uses only the first seven slots in order to achieve the most compact machine code in compact representation.
 
 ## Execution Units
 
