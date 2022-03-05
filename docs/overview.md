@@ -117,13 +117,13 @@ The MAM arithmetic unit operation set distinguishes explicitly between single-cy
 #### Nullary Arithmetic Operations
 
 Small constant generation in the range (-64, 64):
-- *const N* - the exact set of available small constants is described in the [MAM Operation Set Specification](TODO). Operation *const N* places the constant N into the accumulator *a* (and updates *a1*, *a2* implicitly), setting the flags accordingly - only the *zero* flag is interesting.
+- ***const N*** - the exact set of available small constants is described in the [MAM Operation Set Specification](TODO). Operation ***const N*** places the constant N into the accumulator *a* (and updates *a1*, *a2* implicitly), setting the flags accordingly - only the *zero* flag is interesting.
 
 Note that the MAM architecture includes support for obtaining arbitrary large constant values through a memory-based *dictionary* - this will be elaborated further in the description of the [MAM Memory Units](#mem-memory-units).
 
 Asynchronous integer- and floating-point unit complete operations:
-- *icomplete*
-- *fcomplete*
+- ***icomplete***
+- ***fcomplete***
 
 #### Unary Arithmetic Operations
 
