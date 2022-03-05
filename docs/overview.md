@@ -121,10 +121,6 @@ Small constant generation in the range (-64, 64):
 
 Note that the MAM architecture includes support for obtaining arbitrary large constant values through a memory-based *dictionary* - this will be elaborated further in the description of the [MAM Memory Units](#mem-memory-units).
 
-Asynchronous integer- and floating-point unit complete operations:
-- ***icomplete***
-- ***fcomplete***
-
 #### Unary Arithmetic Operations
 
 Unary arithmetic operations supported by a MAM arithmetic unit can be partitioned into integer operations and floating-point operations. We will start with integer operations. Note again that all unary operations operate on the accumulator and write back to the accumulator *a*. It is standard practice to omit the implicit register *a* in all operation menemonics.
@@ -172,6 +168,12 @@ Floating point operations - note that these are all asynchronous *start* operati
 #### Ternary Arithmetic Operations
 
 Typical floating-point units include a ternary *fused* multiple-and-add instruction. TODO
+
+#### Async Completion
+
+Asynchronous integer- and floating-point unit complete operations - see above for context. Note that these are potentially stalling operations:
+- ***icomplete***
+- ***fcomplete***
 
 #### Condition Flag Update
 
