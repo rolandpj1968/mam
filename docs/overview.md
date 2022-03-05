@@ -100,7 +100,7 @@ The MAM arithmetic unit type provides support for general purpose arithmetic com
 
 Each MAM arithmetic unit is more that a typical *ALU* or floating point unit - instead it encapsulates its own execution state including its own set of (64-bit) registers and flags. As described above, there is a distinguished *accumulator* register, *a*, which is used as the source and/or target of all operations. In addition each MAM arithmetic unit includes four (4) general purpose registers, *r0* through *r3*. The general purpose registers are used as scratch store for intermediate values, and are accessed in two ways - firstly explicit *move* instructions to and from the accumulator, and secondly as the second operand for binary operations like *add*, *xor*. Lastly there are two *accumulator backup* registers, *a1* and *a2* which are never explicitly written, but instead (always) contain the previous two values of the accumulator register. The accumulator backup registers are purely a mechanism to avoid explicit intermediate value save/restore operations to the general-purpose registers during relatively trivial operation sequences and as such are available only as the second operand for binary operations. All registers contain variously integer and double values and do not particular distinguish between them apart from the operations used on them.
 
-All values stored in registers are augmented by a set of six flags which are set at the time that the value was originally calculated. Five of the flags correspond to common cross-architecture flags - *zero, copy, overflow, sign, parity* - that are used to evaluate human-meaningful conditions, e.g. signed less-than-or-equal. The sixth flag *error* supports *speculative* execution and indicates that the value in the register is invalid since it originated from an invalid memory read. The *error* flag is infectious - if any operand has its error flag set, then the operation result is also an *error*. According all of the arithmetic unit registers are 70-bit comprising 64 bits of value and 6 flag bits.
+All register values are augmented by a set of six flags which are set at the time that the value was originally calculated. Five of the flags correspond to common cross-architecture flags - *zero, copy, overflow, sign, parity* - that are used to evaluate human-meaningful conditions, e.g. signed less-than-or-equal. The sixth flag *error* supports *speculative* execution and indicates that the value in the register is invalid since it originated from an invalid memory read. The *error* flag is infectious - if any operand has its error flag set, then the operation result is also an *error*. According all of the arithmetic unit registers are 70-bit comprising 64 bits of value and 6 flag bits.
 
 Lastly each MAM arithmetic unit includes a boolean *condition* register, which is used for conditional execution. The *condition* register is set explicitly from the accumulator register flags as will be described below, and is sticky until the next explicit condition register update operation. The condition register is used for condition register value moves to and from the accumulator register.
 
@@ -108,6 +108,92 @@ In summary, each MAM arithmetic unit is a self-contained relatively register-poo
 
 ### MAM Arithmetic Unit Operation Set
 
+As described above, a MAM arithmetic unit implements an operation set according using an accumulator model. In brief the MAM arithmetic unit operation set includes typical nullary, unary and binary operations which always update the accumulator register *a*, optionally-conditional register move instructions to and from the accumulator *a*, an operation for fetching the current accumulator value from other execution units, including other arithmetic units, and operations for setting the *condition* register. These will be elaborated below.
+
+In general any operation that writes back to the acummulator *a* has the *implicit* side-effect of updating the *accumulator back-up* registers *a1* and *a2* - in short *a2* <- *a1*, *a1* <- *a*, *a* <- new-value - and the previous value of *a2* is dropped. In brief all operations update the accumulator *except* for registers moves *out of* the accumulator, and *condition* register update.
+
+The MAM arithmetic unit operation set distinguishes explicitly between single-cycle operations and multi- or variable-cycle operations. All integer operations except for integer multiply and divide are considered single-cycle. All floating-point operations, on the other hand, are deemed multi-cycle operations. All single-cycle operations are encoded as a single operation; on the other hand all multi- or variable-cycle operations are split into two operations - a *start* operation, and a *complete* operation. The *start* operation initiates an asynchronous computation in the corresponding hardware functional unit, either integer (multiply/divide) or floating-point (all operations). There *MUST* be only one asynchronous operation active at any point in time in either the asynchronous integer unit or the floating-point functional unit; however there can be one integer asynchronous operation and one floating-point asynchronous operation active concurrently. The *complete* operation for both asynchronous units is potentially *stalling* - the entire MAM instruction pipeline across all execution units will be stalled until the result is available. Note that all asynchronous *start* operations are not *accumulator-writing* since the result is not immediately available - as such they do not update *a*, *a1*, or *a2*. On the other hand the *complete* operation possibly stalls, and then eventually writes the result back to the accumulator *a* and updates *a1* and *a2* accordingly.
+
+#### Nullary Arithmetic Operations
+
+Small constant generation in the range (-64, 64):
+- *const N* - the exact set of available small constants is described in the [MAM Operation Set Specification](TODO). Operation *const N* places the constant N into the accumulator *a* (and updates *a1*, *a2* implicitly), setting the flags accordingly - only the *zero* flag is interesting.
+
+Note that the MAM architecture includes support for obtaining arbitrary large constant values through a memory-based *dictionary* - this will be elaborated further in the description of the [MAM Memory Units](#mem-memory-units).
+
+Asynchronous integer- and floating-point unit complete operations:
+- *icomplete*
+- *fcomplete*
+
+#### Unary Arithmetic Operations
+
+Unary arithmetic operations supported by a MAM arithmetic unit can be partitioned into integer operations and floating-point operations. We will start with integer operations. Note again that all unary operations operate on the accumulator and write back to the accumulator *a*. It is standard practice to omit the implicit register *a* in all operation menemonics.
+
+Standard integer unary operations:
+
+- *not* - bitwise inversion
+- *neg* - arithmetic negation, two's-complement
+
+Operations supporting smaller - 8-bit, 16-bit, 32-bit signed and unsigned integer arithmetic:
+
+- *sex[8|16|32]* - sign-extend from the 7th, 15th and 31st bit, respectively
+- *trim[8|16|32]* - zero all bits except the lowest 8, 16 and 32 bits, respectively
+
+Special floating-point function support. Note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent *fcomplete* instruction to wait for and write back the result to the accumulator *a*:
+
+- *inv*
+- *sqrt*
+- *sin*, *cos*, *tan*
+
+#### Binary Arithmetic Operations
+
+Binary arithmetic operations supported by a MAM arithmetic unit can be partitioned into integer operations and floating-point operations. We will start with integer operations. Note again that the first operand of all binary instructions is the accumulator *a*, and the second operand is explicit in the operation as one of the general-purpose registers, *r0* through *r3* or accumulator back-up registers *a1* or *a2*. We do not include the normal *compare* or *test* instructions from typical ISA's since they are essentially just *sub* and *xor*.
+
+Standard integer bitwise operations:
+
+- *and*, *or*, *xor* *[rN|aM]*
+
+Single-cycle integer arithmetic:
+
+- *add*, *sub*, *rsb* *[rN|aM]* - note *rsb* is reverse-subtract, i.e. *a* <- *op2* - *a*
+
+Bitwise integer shift operations:
+
+- *shl*, *shrl*, *shra* *[rN|aM]* - shift-left, shift-right-logical (i.e. 0-fill) and shift-right-arithmetic (i.e. sign-fill).
+
+Asynchronous integer operations - note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent *icomplete* instruction to wait for and write back the result to the accumulator *a*:
+
+- *umul*, *imul*, *udiv*, *idiv* *[rN|aM]*
+
+Floating point operations - note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent *fcomplete* instruction to wait for and write back the result to the accumulator *a*:
+
+- *fadd*, *fsub*, *fmul*, *fdiv* *[rN|aM]* 
+
+#### Ternary Arithmetic Operations
+
+Typical floating-point units include a ternary *fused* multiple-and-add instruction. TODO
+
+#### Condition Flag Update
+
+Set the *condition register*:
+
+- *if[ul|ule|il|ile|zero|pe|carry]* - including unsigned and signed comparison; note that since conditional moves support both condition register set and clear we do not need the inverse conditions here
+
+#### Register Moves
+
+Accumulator save to general-purpose-register - note, non-accumulator-writing:
+
+- *save[if|ifnot]* *rN*
+
+Accumulator read from general-purpose or accumulator back-up register - note conditional restores are always considered accumulator-writing
+
+- *restore[if|ifnot]* *[rN|aM]*
+
+#### Fetch Accumulator from Remote Execution Units
+
+Note that the semantics here is that the value computed *in this instruction* in the remote execution unit is written to the (local) accumulator, allowing efficient chaining of computation between execution units. This is an accumulator-writing operation, so *a1* and *a2* are updated:
+
+- *fetch uN* - where *N* is the slot number - if *N* is this slot then the local accumulator value is duplicated
 
 
 ### MAM Memory Units
