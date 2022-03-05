@@ -131,43 +131,43 @@ Unary arithmetic operations supported by a MAM arithmetic unit can be partitione
 
 Standard integer unary operations:
 
-- *not* - bitwise inversion
-- *neg* - arithmetic negation, two's-complement
+- ***not*** - bitwise inversion
+- ***neg*** - arithmetic negation, two's-complement
 
 Operations supporting smaller - 8-bit, 16-bit, 32-bit signed and unsigned integer arithmetic:
 
-- *sex[8|16|32]* - sign-extend from the 7th, 15th and 31st bit, respectively
-- *trim[8|16|32]* - zero all bits except the lowest 8, 16 and 32 bits, respectively
+- ***sex[8|16|32]*** - sign-extend from the 7th, 15th and 31st bit, respectively
+- ***trim[8|16|32]*** - zero all bits except the lowest 8, 16 and 32 bits, respectively
 
-Special floating-point function support. Note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent *fcomplete* instruction to wait for and write back the result to the accumulator *a*:
+Special floating-point function support. Note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent ***fcomplete*** instruction to wait for and write back the result to the accumulator *a*:
 
-- *inv*
-- *sqrt*
-- *sin*, *cos*, *tan*
+- ***inv***
+- ***sqrt***
+- ***sin***, ***cos***, ***tan***
 
 #### Binary Arithmetic Operations
 
-Binary arithmetic operations supported by a MAM arithmetic unit can be partitioned into integer operations and floating-point operations. We will start with integer operations. Note again that the first operand of all binary instructions is the accumulator *a*, and the second operand is explicit in the operation as one of the general-purpose registers, *r0* through *r3* or accumulator back-up registers *a1* or *a2*. We do not include the normal *compare* or *test* instructions from typical ISA's since they are essentially just *sub* and *xor*.
+Binary arithmetic operations supported by a MAM arithmetic unit can be partitioned into integer operations and floating-point operations. We will start with integer operations. Note again that the first operand of all binary instructions is the accumulator *a*, and the second operand is explicit in the operation as one of the general-purpose registers, *r0* through *r3* or accumulator back-up registers *a1* or *a2*. We do not include the normal *compare* or *test* instructions from typical ISA's since they are essentially just ***sub*** and ***xor*** that set condition flags - in the MAM arithmetic unit *all* operations set the flags and flags are carried with all values even through register move operations.
 
 Standard integer bitwise operations:
 
-- *and*, *or*, *xor* *[rN|aM]*
+- ***and***, ***or***, ***xor*** ***[rN|aM]***
 
 Single-cycle integer arithmetic:
 
-- *add*, *sub*, *rsb* *[rN|aM]* - note *rsb* is reverse-subtract, i.e. *a* <- *op2* - *a*
+- ***add***, ***sub***, ***rsb*** ***[rN|aM]*** - note ***rsb*** is reverse-subtract, i.e. *a* <- *op2* - *a*
 
 Bitwise integer shift operations:
 
-- *shl*, *shrl*, *shra* *[rN|aM]* - shift-left, shift-right-logical (i.e. 0-fill) and shift-right-arithmetic (i.e. sign-fill).
+- ***shl***, ***shrl***, ***shra*** ***[rN|aM]*** - shift-left, shift-right-logical (i.e. 0-fill) and shift-right-arithmetic (i.e. sign-fill).
 
-Asynchronous integer operations - note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent *icomplete* instruction to wait for and write back the result to the accumulator *a*:
+Asynchronous integer operations - note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent ***icomplete*** instruction to wait for and write back the result to the accumulator *a*:
 
-- *umul*, *imul*, *udiv*, *idiv* *[rN|aM]*
+- ***umul***, ***imul***, ***udiv***, ***idiv*** ***[rN|aM]***
 
-Floating point operations - note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent *fcomplete* instruction to wait for and write back the result to the accumulator *a*:
+Floating point operations - note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent ***fcomplete*** instruction to wait for and write back the result to the accumulator *a*:
 
-- *fadd*, *fsub*, *fmul*, *fdiv* *[rN|aM]* 
+- ***fadd***, ***fsub***, ***fmul***, ***fdiv*** ***[rN|aM]*** 
 
 #### Ternary Arithmetic Operations
 
@@ -177,23 +177,23 @@ Typical floating-point units include a ternary *fused* multiple-and-add instruct
 
 Set the *condition register*:
 
-- *if[ul|ule|il|ile|zero|pe|carry]* - including unsigned and signed comparison; note that since conditional moves support both condition register set and clear we do not need the inverse conditions here
+- ***if[ul|ule|il|ile|zero|pe|carry]*** - including unsigned and signed comparison; note that since conditional moves support both condition register set and clear we do not need the inverse conditions here
 
 #### Register Moves
 
 Accumulator save to general-purpose-register - note, non-accumulator-writing:
 
-- *save[if|ifnot]* *rN*
+- ***save[if|ifnot]*** ***rN***
 
 Accumulator read from general-purpose or accumulator back-up register - note conditional restores are always considered accumulator-writing
 
-- *restore[if|ifnot]* *[rN|aM]*
+- ***restore[if|ifnot]*** ***[rN|aM]***
 
 #### Fetch Accumulator from Remote Execution Units
 
 Note that the semantics here is that the value computed *in this instruction* in the remote execution unit is written to the (local) accumulator, allowing efficient chaining of computation between execution units. This is an accumulator-writing operation, so *a1* and *a2* are updated:
 
-- *fetch uN* - where *N* is the slot number - if *N* is this slot then the local accumulator value is duplicated
+- ***fetch uN*** - where *N* is the slot number - if *N* is this slot then the local accumulator value is duplicated
 
 
 ### MAM Memory Units
