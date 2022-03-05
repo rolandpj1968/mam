@@ -86,11 +86,31 @@ MAM assembler mnemonic representation uses the same presentation for both raw ma
 
 Lastly the specific choices for execution unit slots in the MAM model *MAM/4a/2m/c/./4a/2m/2./16* should now be clear. In particular we have a full set of execution unit types in the first seven slots, so non-dense code can mostly be compactly represented with a single header byte. Of course it is up to the code compiler to emit machine code that mostly uses only the first seven slots in order to achieve the most compact machine code with compact machine code encoding.
 
-## Execution Units
+## MAM Execution Units
 
-### Arithmetic Units
+As described above a MAM *model* comprises a specific collection of execution units, each of which is driven explicitly and independently by each instruction. The MAM specification defines three types of execution unit types, each of which is required in a particular MAM model to provide a functional general-purpose CPU. The MAM architecture and instruction encoding naturally supports custom extension to additional types of execution units; however this document focuses on the core MAM execution units only.
 
-### Memory Units
+In general, each execution unit of a MAM model is self-contained. Internal state of each execution unit, including for example registers, is not directly visible to other execution units. Data exchange between execution units is effected by explicit transfer instructions, as will be described below.
 
-### Control Unit
+### MAM Arithmetic Units
+
+The MAM arithmetic unit type provides support for general purpose arithmetic computation, including 64-bit integer arithmetic, and (64-bit) double-precision IEEE 754 floating point arithmetic. The MAM arithmetic unit operations follow an *accumulator* model - all operations use a distinguished *accumulator* register 'A' as source operand and result target. Although accumulator instruction set architectures suffer some instruction-count bloat compared to, for example, typical *RISC* instruction set architectures through the need to explicitly move values into- and out of the accumulator register, this is a deliberate decision in MAM in order to allow a very compact 8-bit operation encoding. MAM motivates and mitigates the decision of an accumulator architecture further by providing the oportunity for substantial parallelism across multiple arithmetic units, and also provides some further mitigation as described below.
+
+### MAM Arithmetic Unit State
+
+Each MAM arithmetic unit is more that a typical *ALU* or floating point unit - instead it encapsulates its own execution state including its own set of (64-bit) registers and flags. As described above, there is a distinguished *accumulator* register, *a*, which is used as the source and/or target of all operations. In addition each MAM arithmetic unit includes four (4) general purpose registers, *r0* through *r3*. The general purpose registers are used as scratch store for intermediate values, and are accessed in two ways - firstly explicit *move* instructions to and from the accumulator, and secondly as the second operand for binary operations like *add*, *xor*. Lastly there are two *accumulator backup* registers, *a1* and *a2* which are never explicitly written, but instead (always) contain the previous two values of the accumulator register. The accumulator backup registers are purely a mechanism to avoid explicit intermediate value save/restore operations to the general-purpose registers during relatively trivial operation sequences and as such are available only as the second operand for binary operations. All registers contain variously integer and double values and do not particular distinguish between them apart from the operations used on them.
+
+All values stored in registers are augmented by a set of six flags which are set at the time that the value was originally calculated. Five of the flags correspond to common cross-architecture flags - *zero, copy, overflow, sign, parity* - that are used to evaluate human-meaningful conditions, e.g. signed less-than-or-equal. The sixth flag *error* supports *speculative* execution and indicates that the value in the register is invalid since it originated from an invalid memory read. The *error* flag is infectious - if any operand has its error flag set, then the operation result is also an *error*. According all of the arithmetic unit registers are 70-bit comprising 64 bits of value and 6 flag bits.
+
+Lastly each MAM arithmetic unit includes a boolean *condition* register, which is used for conditional execution. The *condition* register is set explicitly from the accumulator register flags as will be described below, and is sticky until the next explicit condition register update operation. The condition register is used for condition register value moves to and from the accumulator register.
+
+In summary, each MAM arithmetic unit is a self-contained relatively register-poor accumulator-based general-purpose arithmetic unit, with support for conditional execution.
+
+### MAM Arithmetic Unit Operation Set
+
+
+
+### MAM Memory Units
+
+### MAM Control Unit
 
