@@ -2,7 +2,7 @@
 
 ## Introduction
 
-The multi-accumulator machine (*MAM*) is an machine- and *instruction set architecture* (ISA) that fits into the general category of explicitly-parallel VLIW machines. MAM goes somewhat further than typical VLIW architectures and ISA's by directly driving multiple mostly-independent execution units from execution-unit-specific (sub-)operations within a single *instruction*. Each (hardware) execution unit is driven by a specific *slot* in the (long) instruction. Each slot within the instruction 'word' is 8 bits; the instruction comprises a collection of these 8-bit operations and the semantics of instruction execution is that all (non-NOP) operands in the instruction word are executed in parallel.
+The multi-accumulator machine (*MAM*) is an machine- and *instruction set architecture* (ISA) that fits into the general category of explicitly-parallel VLIW machines. MAM goes somewhat further than typical VLIW architectures and ISA's by directly driving multiple mostly-independent execution units from execution-unit-specific (sub-)operations within a single *instruction*. Each (hardware) execution unit is driven by a specific *slot* in the (long) instruction. Each slot within the instruction 'word' is 8 bits; the instruction comprises a collection of these 8-bit operations and the semantics of instruction execution is that all (non-NOP) operations in the instruction word are executed in parallel.
 
 In general a specific MAM *model* comprises a particular collection of execution units of various types - a typical model would include some number of *arithmetic* units, some *memory* (load/store) units and a *flow-control* (branch/call et al) unit.
 
@@ -94,7 +94,9 @@ In general, each execution unit of a MAM model is self-contained. Internal state
 
 ### MAM Arithmetic Units
 
-The MAM arithmetic unit type provides support for general purpose arithmetic computation, including 64-bit integer arithmetic, and (64-bit) double-precision IEEE 754 floating point arithmetic. The MAM arithmetic unit operations follow an *accumulator* model - all operations use a distinguished *accumulator* register 'A' as source operand and result target. Although accumulator instruction set architectures suffer some instruction-count bloat compared to, for example, typical *RISC* instruction set architectures through the need to explicitly move values into- and out of the accumulator register, this is a deliberate decision in MAM in order to allow a very compact 8-bit operation encoding. MAM motivates and mitigates the decision of an accumulator architecture further by providing the oportunity for substantial parallelism across multiple arithmetic units, and also provides some further mitigation as described below.
+The MAM arithmetic unit type provides support for general purpose arithmetic and bitwise computation, including 64-bit integer arithmetic, and (64-bit) double-precision IEEE 754 floating point arithmetic. MAM arithmetic units are responsible not only for general arithmetic and bit-wise computation, but also for the generation of data addresses used by the MAM memory units.
+
+The MAM arithmetic unit operations follow an *accumulator* model - all operations use a distinguished *accumulator* register 'A' as source operand and result target. Although accumulator instruction set architectures suffer some instruction-count bloat compared to, for example, typical *RISC* instruction set architectures through the need to explicitly move values into- and out of the accumulator register, this is a deliberate decision in MAM in order to allow a very compact 8-bit operation encoding. MAM motivates and mitigates the decision of an accumulator architecture further by providing the oportunity for substantial parallelism across multiple arithmetic units, and also provides some further mitigation as described below.
 
 ### MAM Arithmetic Unit State
 
@@ -119,7 +121,13 @@ The MAM arithmetic unit operation set distinguishes explicitly between single-cy
 Small constant generation in the range (-64, 64):
 - ***const N*** - the exact set of available small constants is described in the [MAM Operation Set Specification](TODO). Operation ***const N*** places the constant N into the accumulator *a* (and updates *a1*, *a2* implicitly), setting the flags accordingly - only the *zero* flag is interesting.
 
-Note that the MAM architecture includes support for obtaining arbitrary large constant values through a memory-based *dictionary* - this will be elaborated further in the description of the [MAM Memory Units](#mem-memory-units).
+Note that the MAM architecture includes support for obtaining arbitrary large constant values through a memory-based *constants dictionary* typically embedded in the executable image - this will be elaborated further in the description of the [MAM Memory Units](#mam-memory-units):
+
+- ***dict*** - place the address of the active *constants dictionary* into the accumulator
+
+Access to sundry architectural registers (TODO elaborate):
+
+- ***ip***, ***sp***, ***cntl*** - place the value of various global architecture registers into the accumulator
 
 #### Unary Arithmetic Operations
 
@@ -129,6 +137,10 @@ Standard integer unary operations:
 
 - ***not*** - bitwise inversion
 - ***neg*** - arithmetic negation, two's-complement
+
+Bit fiddling:
+
+- ***bcnt***, ***lsb***, ***msb*** - count 1 bits, least significant 1-bit, most significant 1-bit
 
 Operations supporting smaller - 8-bit, 16-bit, 32-bit signed and unsigned integer arithmetic:
 
@@ -179,7 +191,7 @@ Asynchronous integer- and floating-point unit complete operations - see above fo
 
 Set the *condition register*:
 
-- ***if[ul|ule|il|ile|zero|pe|carry]*** - including unsigned and signed comparison; note that since conditional moves support both condition register set and clear we do not need the inverse conditions here
+- ***if[ul|ule|il|ile|zero|parity|carry]*** - including unsigned and signed comparison; note that since conditional moves support both condition register set and clear we do not need the inverse conditions here
 
 #### Register Moves
 
@@ -187,7 +199,7 @@ Accumulator save to general-purpose-register - note, non-accumulator-writing:
 
 - ***save[if|ifnot]*** ***rN***
 
-Accumulator read from general-purpose or accumulator back-up register - note conditional restores are always considered accumulator-writing
+Accumulator read from general-purpose or accumulator back-up register - note conditional restores are always considered accumulator-writing:
 
 - ***restore[if|ifnot]*** ***[rN|aM]***
 
@@ -197,6 +209,15 @@ Note that the semantics here is that the value computed *in this instruction* in
 
 - ***fetch uN*** - where *N* is the slot number - if *N* is this slot then the local accumulator value is duplicated
 
+#### Other Operations ####
+
+Zeroing of general-purpose registers - some or all general-purpose registers can be zero'ed in a single operation - this will be motivated and described further in the discussion of function-call and trap support in the *MAM control unit*:
+
+- ***rzero*** [***r0***] [***r1***] [***r2***] [***r3***]
+
+Zeroing of accumulator back-up registers:
+
+- ***azero*** [***a1***] [***a2***]
 
 ### MAM Memory Units
 
