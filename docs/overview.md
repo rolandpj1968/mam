@@ -94,7 +94,7 @@ In general, each execution unit of a MAM model is self-contained. Internal state
 
 ### MAM Arithmetic Units
 
-The MAM arithmetic unit type provides support for general purpose arithmetic and bitwise computation, including 64-bit integer arithmetic, and (64-bit) double-precision IEEE 754 floating point arithmetic. MAM arithmetic units are responsible not only for general arithmetic and bit-wise computation, but also for the generation of data addresses used by the MAM memory units.
+The MAM arithmetic unit type provides support for general purpose arithmetic and bitwise computation, including 64-bit integer arithmetic, and (64-bit) double-precision IEEE 754 floating point arithmetic. MAM arithmetic units are responsible not only for general arithmetic and bit-wise computation, but also for the generation of data addresses used by the MAM memory units. It is expected that some MAM implementations will omit support for floating point operations. Accordingly in the formal MAM specification integer operations are defined as part of the mandatory *MAM core* specification, whereas floating point support is defined as part of an optional *MAM extension* specification. In the following high level overview it will be assumed that floating point support is present.
 
 The MAM arithmetic unit operations follow an *accumulator* model - all operations use a distinguished *accumulator* register 'A' as source operand and result target. Although accumulator instruction set architectures suffer some instruction-count bloat compared to, for example, typical *RISC* instruction set architectures through the need to explicitly move values into- and out of the accumulator register, this is a deliberate decision in MAM in order to allow a very compact 8-bit operation encoding. MAM motivates and mitigates the decision of an accumulator architecture further by providing the oportunity for substantial parallelism across multiple arithmetic units, and also provides some further mitigation as described below.
 
@@ -189,11 +189,17 @@ Asynchronous integer- and floating-point unit complete operations - see above fo
 
 #### Condition Flag Update
 
-Set the *condition register*:
+Set the *condition register* and copy the boolean value (zero or one) of the condition into the accumulator - i.e. this is really a unary operator. As noted before, the condition register value is sticky until the next explicit condition flag update:
 
-- ***if[ul|ule|il|ile|zero|parity|carry]*** - including unsigned and signed comparison; note that since conditional moves support both condition register set and clear we do not need the inverse conditions here
+- ***if[ul|ule|uge|ug|il|ile|ige|ig|zero|nonzero|parityeven|parityodd|carry|nocarry|error|noerror]*** - including unsigned and signed comparison; note ***ifnonzero** for example can be used to set the condition register to arbitrary precomputed boolean values
+
+Read the *condition register* into the accumulator value as a 0 or 1:
+
+- ***cond***
 
 #### Register Moves
+
+All register moves are to and from the accumulator register. Register moves are optionally conditional on the *condition register* supporting conditional computation.
 
 Accumulator save to general-purpose-register - note, non-accumulator-writing:
 
@@ -215,11 +221,79 @@ Zeroing of general-purpose registers - some or all general-purpose registers can
 
 - ***rzero*** [***r0***] [***r1***] [***r2***] [***r3***]
 
-Zeroing of accumulator back-up registers:
+Zeroing of accumulator and/or accumulator back-up registers:
 
-- ***azero*** [***a1***] [***a2***]
+- ***azero*** [***a***] [***a1***] [***a2***]
 
 ### MAM Memory Units
+
+MAM memory units are responsible for transfers to and from DRAM through the normal L1/L2 etc. memory cache hierarchy. The MAM memory until provides explicit support for *speculative* memory access. Memory *read* can be hoisted above subsequent possibly-overwriting memory writes, as will be elaborated below. Memory *writes* can be tagged as *speculative*, in which case the memory state including the speculative write values is visible only to the specific memory unit; equivalently, speculative writes will not be visible to memory read operations in other memory units. Lastly, both memory reads and memory writes can be *conditional*, according to the *condition register* of the MAM memory unit. A conditional write is a NOP if the *condition register* is 0; a conditional read immeidately generates the *error* value if the *condition register* is 0, avoiding any memory (cache) activity. This will be elaborated in more detail below.
+
+As is the case with all MAM execution units, the MAM memory unit uses an *accumulator* model; there is a distinguished 64-bit *accumulator register*, ***a***, which is used implicitly as the memory address for both memory read and write operations. In addition, there is a single *accumulator back-up register*, *a1*, which is used as the write value (as well as for some additional special-purpose instructions). As is typical practice in MAM, the accumulator back-up regiter ***a1*** always implicitly contains the previous value of the accumulator register ***a***. Memory addresses and write values are generated by MAM arithmetic units and transferred to the MAM memory unit using a ***fetch*** instruction. Write operations are typically prepared by a sequence of two ***fetch*** instructions - the first ***fetch** retrieves the write value, and the second ***fetch*** retrieves the write value.
+
+As seen above with MAM arithmetic units, MAM memory units support *conditional* operations through a *condition register*. Unlike the MAM arithmetic unit which has operations to set the condition register explicitly, MAM memory units set their condition register by fetching the condition register from another MAM execution unit.
+
+Note that this section provides a high-level overview focused on memory read and write operation semantics within a single MAM processor. The broader topics of virtual memory (paging) support and memory *coherency* semantics in a multi-processing shared-memory environment are beyond the scope of this section, and are elaborated separately in [TODO].
+
+[TODO alignment of memory operations]
+
+#### MAM Memory Read Achitecture
+
+Each MAM memory unit includes two (2) read ports/registers - we will use the terms *read port* and *read register* interchangeably in the following, although it should be noted that MAM read port/register infrastructure is more complex than what is normally understood by either term. Memory read in MAM architecture is an asynchronous operation, separated into explicit *start read* and *complete read* instructions. Accordingly, each read register supports the necessary state to support an in-progress asynchronous read operation, namely the memory address, read width, read completion status, read value and boolean state indicating whether the read should take note of interim speculative memory writes.
+
+A memory read is initiated by a(n optionally conditional) *start read* instruction which indicates the width of the read - 8, 16, 32 or 64 bits, and whether the read operation should take account of subsequent *speculative* writes. In-progress read operations *always* take account of subsequent non-speculative writes issued by any of the MAM memory units - any write that overlaps the read port's address will be noticed by the read port and included in the (eventual) read result. As such, the MAM architecture allows reads in general to be hoisted above writes in order to mitigate the latency associated with reads in general.
+
+Memory reads are *completed* with a specific *read complete* operation. The *read complete* instruction defines the memory state *seen* by the asynchronous read operation, and excludes concurrent writes executed by other MAM memory units in the same instruction. The *read complete* operation is (potentially) stalling like all MAM *completion* operations - if the read value is not yet available in the read port, typically due to the memory cache misses, the entire instruction stream will be stalled until the read value is available. The *read complete* operation copies the final read result into the MAM memory unit *accumulator* from where it can be retrieved by other MAM execution units using the ***fetch*** operation. In addition, if the memory read failed due to an invalid address, the *read complete* operation signals a page fault as will be described in more detail below.
+
+Once the read operation has been *completed*, the read port maintains the final read state, including the completed read value, until another read operation is initiated in the read port. Any further *read complete* operations on the read port will simply transfer the already complete read value into the *accumulator* ***a***.
+
+In summary, each MAM memory unit supports two asynchronous and intrinsically speculative memory reads. In-progress, i.e. incomplete, reads will take account of subsequent non-speculative write operations in any of the MAM memory units, thereby allowing memory reads to be hoisted above memory writes in order to mitigate the overall latency impact and typical instruction serialising of *read-after-write* (RAW) data *hazards*. In addition, MAM memory units support *speculative memory writes* which allow each memory unit to have a special memory-unit-local view of memory state, as will be elaborated further below. MAM memory reads can optionally also take account of speculative writes in the same MAM memory unit.
+
+#### MAM Memory Write Achitecture
+
+Apart from standard write operations, MAM memory units provide a facility for *speculative writes*. The effects of speculative writes are visibile reads performed in the same MAM memory unit, and only if a read operations explicitly opts in to the *speculative* memory view. Architecturally, speculative writes are supported by a MAM memory unit local speculative write buffer, which contains at most four (4) memory writes. Speculative writes are eventually either dropped or committed with an explicit conditional operation. When specualtive writes are dropped, they are no longe rvisible to the local MAM memory unit, nor with they ever be visible elsewhere. On the other hand, when speculative writes are committed, they become immediately visible to other MAM memory units and *will* be written to DRAM through the cache hierarchy as per non-speculative reads.
+
+In general memory write semantics in MAM dictate that a memory write is not visible to read operations initiated in the same instruction cycle, and/but are visible to all MAM memory units in the following instruction cycle.
+
+#### MAM Memory Unit Page Fault Behaviour
+
+#### MAM Memory Unit Special Operations
+
+Apart from standard memory read/write support, MAM memory units also support a handful of special purpose instructions, some of which are relatively standard in modern architectures and some of which - pointer-following read, for example, are relatively unusual. MAM does not have special support for memory prefetch, which is relatively standard in modern architectures; instead that dummy *start read* instructions suffice for the purpose of memory prefetch in MAM, particularly since in MAM *all* memory reads are asynchronous and non-stalling until the corresponding *read complete* operation, which can be completely omitted for *prefetch* purposes.
+
+##### MAM Atomic Memory Access
+
+MAM memory units support atomic memory operations in a multi-processing environment through *compare-and-swap* (CAS). This will not be further elaborated here - refer to [TODO] for a further elaboration of memory coherency semantics in a multi-processing shared memory environment.
+
+##### MAM Non-Temporal Memory Write
+
+Like most modern architectures, MAM supports *non-temporal* writes which bypass the memory cache hierarchy as far as possible. In short a non-temporal write will not itself cause its cache-line to be brought into any of the memory cache hierarchy layers, instead *writing behind* to the more distant cache hierarchy. On the other hand if the cache line associated with the non-temporal write is already in near-line cache, the memory write will complete in the (relatively) near-line cache.
+
+##### MAM Pointer-Following Read
+
+MAM memory units provide spcial asynchronous support for a sequence of *pointer-following* memory reads. Like with all MAM memory unit reads, pointer-following reads proceed asynchronously. However, instead of a single memory read at the specified address, pointer-following reads allow up to three (3) additional memory reads to proceed asynchonously, each further read at a fixed 16-bit signed offset from the previous read. Both of the memory ports in a MAM memory unit support independent concurrent pointer-following reads and hence each have four (4) value registers, one for each read of the pointer-follwing sequence. Pointer-following reads are necessarily 64-bit, since each interim value is used as the (base) memory address of the following memory read in the pointer-following sequence.
+
+The motivation for pointer-following reads is to minimise the latency overhead of explicit *complete read* operations. Instead, as soon as any memory read in a pointer-following sequence completes, the memory port immediately initiates the next memory read in the sequence.
+
+Like with normal *complete read* instructions, any of the (up to four) read results can be completed at any point in the instruction sequence, not necessarily in strict order of read results. Completion of any of the read results is a stalling operation and implicitly effects completion of any earlier reads in the pointer-following chain.
+
+Pointer-follwing read operations take two arguments. The first argument in the accumulator ***a*** is the first (base) memory address, as with other read operations. The second parameter to a pointer-folling read, in the accumulator backup register ***a1***, is a 64-bit value containing four (4) signed 16-bit offsets. The pointer following read starts by adding the first (lowest bits) 16-bit offset to the (first) address and initiates a 64-bit read at that address. As soon as that (first) read completes, the result is used as a base address for the second read. The second memory address is then computed as that first read result plus the second 16-bit offset. The read port then initiates the second read immediately, without waiting for a *read complete* operation on the first read. The same process then continues for subsequent reads until the pointer-following read sequence is complete.
+
+The special offset value 0x8000 is used as a marker for the end of the pointer-following read sequence. As soon as the value 0x8000 is seen as the next offset value, the pointer-folowing read is complete and no further reads are performed. For example a 64-bit pointer-following offset value of 0x000080008ff20008 specifies a sequence of two (2) pointer-following reads, where the first offset is 8, and the second offset is -8.
+
+Like normal asynchronous reads, pointer-following reads also *sniff* write activity in any of the MAM memory units, until the read has been explicitly completed through a *complete read* operation. If any write operation in any MAM memory unit overlaps with any of the addresses used for one of the sequence of pointer-following reads, the pointer-following read is replayed again from the overwritten address, even if additional reads in the sequence have already been completed. In this manner the *complete read* for any one of the sequence of pointer-following reads defines the memory state of the read operation as a whole, just as is the case with simple read operations. Similarly the *read complete* operation defines the point at which page faults are raised. The only subtlety with read completion of a pointer-following read (sequence) is that it is legal to execute a *complete read* on any of the reads in the sequence at any time. If earlier reads in the sequence have not been explicitly completed at that time, then the read complete of the later read in the sequence explicitly first completes any incomplete earlier reads in the sequence, which of course could generate page faults for the earlier reads.
+
+In terms of hardware implementation of pointer-following reads, it is expected that at a minimum a MAM implementation will asynchronously continue execution of pointer-following reads, in the absence of explicit read completion. However, it is also anticipated that further hardware optimisations are possible, including pushing pointer/offset following logic into the memory cache layers and even the DRAM controller, in order to avoid entirely sequential communications between the processor and more distant and relatively high-latency cache layers and DRAM itself. Such optimisations are expected to significantly improve performance of *graph database* applications.
+
+##### MAM Memory Cache Line Zero
+
+MAM memory units support zeroing of an entire cache line (64-bytes) in a single instruction. Cache line zero behaviour is non-temporal in that it will not unnecessarily pollute or otherwise involve near-line cache levels.
+
+Cache-line clear operations are intended to support fast non-temporal zeroing of large memory address ranges, as is typical with in virtual memory (pge) management and managed language environment garbage collection. It is expected that a MAM implementation will optimise cache-line zeroing through the entire memory cache hierarchy and DRAM controller.
+
+#### MAM Memory Unit Operations
+
+[TODO]
 
 ### MAM Control Unit
 
