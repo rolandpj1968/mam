@@ -116,6 +116,8 @@ In general any operation that writes back to the acummulator *a* has the *implic
 
 The MAM arithmetic unit operation set distinguishes explicitly between single-cycle operations and multi- or variable-cycle operations. All integer operations except for integer multiply and divide are considered single-cycle. All floating-point operations, on the other hand, are deemed multi-cycle operations. All single-cycle operations are encoded as a single operation; on the other hand all multi- or variable-cycle operations are split into two operations - a *start* operation, and a *complete* operation. The *start* operation initiates an asynchronous computation in the corresponding hardware functional unit, either integer (multiply/divide) or floating-point (all operations). There *MUST* be only one asynchronous operation active at any point in time in either the asynchronous integer unit or the floating-point functional unit; however there can be one integer asynchronous operation and one floating-point asynchronous operation active concurrently. The *complete* operation for both asynchronous units is potentially *stalling* - the entire MAM instruction pipeline across all execution units will be stalled until the result is available. Note that all asynchronous *start* operations are not *accumulator-writing* since the result is not immediately available - as such they do not update *a*, *a1*, or *a2*. On the other hand the *complete* operation possibly stalls, and then eventually writes the result back to the accumulator *a* and updates *a1* and *a2* accordingly.
 
+Single-cycle binary operations typically allow the second operand to be specified in the operation itself as any of the general-purpose registers or accumulator back-up registers. On the other hand, asynchronous operations typically use ***a*** and ***a1*** as operands - this is purely to reduce the operation set size with the philospohy that single-cycle operations should be represented as efficiently as possible in the instruction stream, but asynchronous operations, being inherently multi-cycle and rarer do not require particular focus on operation-chaining efficiency.
+
 ##### Nullary Arithmetic Operations
 
 Small constant generation in the range (-64, 64):
@@ -144,7 +146,7 @@ Bit fiddling:
 
 Operations supporting smaller - 8-bit, 16-bit, 32-bit signed and unsigned integer arithmetic:
 
-- ***sex[8|16|32]*** - sign-extend from the 7th, 15th and 31st bit, respectively
+- ***sext[8|16|32]*** - sign-extend from the 7th, 15th and 31st bit, respectively
 - ***trim[8|16|32]*** - zero all bits except the lowest 8, 16 and 32 bits, respectively
 
 Special floating-point function support. Note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent ***fcomplete*** instruction to wait for and write back the result to the accumulator *a*:
@@ -163,7 +165,7 @@ Standard integer bitwise operations:
 
 Single-cycle integer arithmetic:
 
-- ***add***, ***sub***, ***rsb*** ***[rN|aM]*** - note ***rsb*** is reverse-subtract, i.e. *a* <- *op2* - *a*
+- ***add***, ***sub***, ***rsb*** ***[rN|aM]*** - note ***rsb*** is reverse-subtract, i.e. ***a*** <- *op2* - ***a***
 
 Bitwise integer shift operations:
 
@@ -171,15 +173,15 @@ Bitwise integer shift operations:
 
 Asynchronous integer operations - note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent ***icomplete*** instruction to wait for and write back the result to the accumulator *a*:
 
-- ***umul***, ***imul***, ***udiv***, ***idiv*** ***[rN|aM]***
+- ***umul***, ***imul***, ***udiv***, ***idiv*** - note ***a*** and ***a1*** are the operands
 
 Floating point operations - note that these are all asynchronous *start* operations and do not update the *accumulator*. There *MUST* be a subsequent ***fcomplete*** instruction to wait for and write back the result to the accumulator *a*:
 
-- ***fadd***, ***fsub***, ***fmul***, ***fdiv*** ***[rN|aM]*** 
+- ***fadd***, ***fsub***, ***fmul***, ***fdiv*** - note ***a*** and ***a1*** are the operands
 
 ##### Ternary Arithmetic Operations
 
-Typical floating-point units include a ternary *fused* multiple-and-add instruction. TODO
+- ***fmuladd** - computes ***a*** x ***a1*** + ***a2*** as a single asynchronus floating-point computation
 
 ##### Async Completion
 
@@ -217,13 +219,9 @@ Note that the semantics here is that the value computed *in this instruction* in
 
 ##### Other Operations
 
-Zeroing of general-purpose registers - some or all general-purpose registers can be zero'ed in a single operation - this will be motivated and described further in the discussion of function-call and trap support in the *MAM control unit*:
+Zeroing of registers - some or all general-purpose registers can be zero'ed in a single operation - this will be motivated and described further in the discussion of function-call and trap support in the *MAM control unit*:
 
-- ***rzero*** [***r0***] [***r1***] [***r2***] [***r3***]
-
-Zeroing of accumulator and/or accumulator back-up registers:
-
-- ***azero*** [***a***] [***a1***] [***a2***]
+- ***zeroregs*** - the accumulator value ***a*** is used as a 7-bit mask where set bits define which ***rN** (low 4 bits) and ***a**, ***aM*** to zero
 
 ### MAM Memory Units
 
@@ -257,7 +255,15 @@ In general memory write semantics in MAM dictate that a memory write is not visi
 
 #### MAM Memory Unit Page Fault Behaviour
 
-Although virtual memory support is not described in this section, MAM architecture supports virtual memory and memory protection via *paging* as is typical with modern processor architectures. Accordingly, *page-faults* are triggered by memory operations whose addresses are invalid or protected. In general page-faults are triggered asynchronously and may be raised some time after the initiating read or write operation. However, in the case of memory reads, page faults are guaranteed to be raised at or before a read completion operation, and *complete read* operations are blocking in this sense. On the other hand, memory write operations may, in general, raise corresponding page faults some time after the initiating *write* instruction, although the *snooping* semantics of incomplete reads and concurrent writes still applies. It is up to the hardware MAM implementation to choose how to implement memory semantics correctly in this respect, for example by using read completion operations as a barrier instruction for outstanding write page faults.
+Although virtual memory support is not described in this section, MAM architecture supports virtual memory and memory protection via *paging* as is typical with modern processor architectures. Accordingly, *page-faults* are triggered by memory operations whose addresses are invalid or protected. In general page-faults are triggered asynchronously and may be raised some time after the initiating read or write operation. However, in the case of memory reads, page faults are guaranteed to be raised at or before a read completion operation, and *complete read* operations are blocking in this sense. On the other hand, memory write operations may, in general, raise corresponding page faults some time after the initiating *write* instruction, although the *snooping* semantics of incomplete reads and concurrent writes still applies. It is up to the hardware MAM implementation to choose how to implement memory semantics correctly in this respect, for example by using read completion operations as a barrier instruction for outstanding asynchronous write page faults.
+
+Page-fault behaviour under speculative execution is particularly tricky since in general spurious page faults change a program/task's execution semantics and in general speculative execution must not result in externally visible program behaviour different to the program semantics. In order to allow for correct execution semantics in the presence of speculative reads, MAM allows read operations to optionally specify that page-faults should be delayed until read completion time - unlike normal MAM read port behaviour where page faults can be raised as early as possible. In addition MAM memory unit *complete read* operations can specify that no page fault should be raised - instead, in cases where the read address is invalid or protected the *error* value is generated as the result of the read.
+
+In general speculative reads should be approached as follows in order to avoid spurious page-faults. In general, speculative reads (and writes) are used to pre-execute code paths that might not be executed by the program/task. In most cases the speculative path will be gated by a conditional logic branch in the original program code, and speculative execution is used to make progress before the branching condition is known. Accordingly, one way to ensure correct program semantics with speculative execution is to initiate reads in speculative mode - i.e. non-page-fault raising, compute the condition gating the speculative path while the speculative read is still in-progress, and then use a conditional *complete read* operation to complete the read. In this way the potential externally visible artifact of a read page fault is only visible once the speculative path is known to be taken in fact. A trivial example of this is the very common code pattern of *null-pointer* checks gating actual use of a pointer. In MAM a speculative-mode, i.e. non-page-fault raising, read can be initiated before the null pointer check is performed. Then, the read can be conditionlly completed according to the null pointer check outcome.
+
+Alternatively, in cases where it is disadvantageous to compute the speculative branch condition prior to speculative read completion, a non-page-fault generating *complete read* should be used. However, in this aproach, where an error value typically propogates into further speculative execution, further *compensation* code is required to redrive the speculative code path, in order that program semantics are correctly maintained. In general compensation code will execute once the speculative condition is know, check for potential error values from previous speculative reads, and re-run the corresponding logic in non-speculative mode.
+
+Lastly, there are cases where it can be statically proven that reads are page-fault free - for example where a speculative read follows a non-speculative read on the same memory page. In this case speculative code paths are safe to execute in non-speculative mode, since there cannot be any externally-visible spurious behaviour, even if the speculative code path is not taken in fact.
 
 #### MAM Memory Unit Special Operations
 
@@ -269,23 +275,23 @@ MAM memory units support atomic memory operations in a multi-processing environm
 
 ##### MAM Non-Temporal Memory Write
 
-Like most modern architectures, MAM supports *non-temporal* writes which bypass the memory cache hierarchy as far as possible. In short a non-temporal write will not itself cause its cache-line to be brought into any of the memory cache hierarchy levels, instead *writing behind* to the more distant cache hierarchy. On the other hand if the cache line associated with the non-temporal write is already in some level of cache, the memory write will complete in the corresponding cache level.
+Like most modern architectures, MAM supports *non-temporal* writes which bypass the memory cache hierarchy as far as possible. In short a non-temporal write will not itself cause its cache-line to be brought into any of the memory cache hierarchy levels, instead *writing behind* to the more distant cache hierarchy. On the other hand if the cache line associated with the non-temporal write is already in some level of cache, the memory write will complete in the corresponding cache level - essentially the non-temporal write will complete in the closest memory cache level containing the memory address cache line, or DRAM itself.
 
 ##### MAM Pointer-Following Read
 
-MAM memory units provide spcial asynchronous support for a sequence of *pointer-following* memory reads. Like with all MAM memory unit reads, pointer-following reads proceed asynchronously. However, instead of a single memory read at the specified address, pointer-following reads allow up to three (3) additional memory reads to proceed asynchonously, each further read at a fixed 16-bit signed offset from the previous read. Both of the memory ports in a MAM memory unit support independent concurrent pointer-following reads and hence each have four (4) value registers, one for each read of the pointer-follwing sequence. Pointer-following reads are necessarily 64-bit, since each interim value is used as the (base) memory address of the following memory read in the pointer-following sequence.
+MAM memory units provide spcial asynchronous support for a sequence of *pointer-following* memory reads, where subsequent reads in the sequence use the result of the previous read as a (base) memory pointer - for example when traversing a hierarchical or recursive data structure like a linked-list. Like with all MAM memory unit reads, pointer-following reads proceed asynchronously. However, instead of a single memory read at the specified address, pointer-following reads allow up to three (3) additional memory reads to proceed asynchonously, each further read at a fixed 16-bit signed offset from the previous read's result. Both of the memory ports in a MAM memory unit support independent concurrent pointer-following reads and hence each have four (4) value registers, one for each read of the pointer-follwing sequence. Pointer-following reads are necessarily 64-bit, since each interim value is used as the (base) memory address of the following memory read in the pointer-following sequence.
 
-The motivation for pointer-following reads is to minimise the latency overhead of explicit *complete read* operations. Instead, as soon as any memory read in a pointer-following sequence completes, the memory port immediately initiates the next memory read in the sequence.
+The motivation for pointer-following reads is to minimise the latency overhead of explicit *complete read* operations. Instead, as soon as any memory read in a pointer-following sequence completes, the memory port immediately initiates the next memory read in the sequence independent of the instruction sequence.
 
-Like with normal *complete read* instructions, any of the (up to four) read results can be completed at any point in the instruction sequence, not necessarily in strict order of read results. Completion of any of the read results is a stalling operation and implicitly effects completion of any earlier reads in the pointer-following chain.
+Like with normal *complete read* instructions, any of the (up to four) read results can be completed at any point in the instruction sequence, not necessarily in strict order of read results. Completion of any of the read results is a stalling operation and implicitly effects completion of any earlier reads in the pointer-following chain. Pointer-following reads are always executed in *page-fault-free* semantics - in other words page faults are not generated early, but are only raised at the time of the corresponding explicit *read complete* operation. As such, a *pointer-following* read will stall at the first invalid or protected memory address in the sequence, until a corresponding *complete read* allows further progress, for example via page-fault handling.
 
-Pointer-follwing read operations take two arguments. The first argument in the accumulator ***a*** is the first (base) memory address, as with other read operations. The second parameter to a pointer-folling read, in the accumulator backup register ***a1***, is a 64-bit value containing four (4) signed 16-bit offsets. The pointer following read starts by adding the first (lowest bits) 16-bit offset to the (first) address and initiates a 64-bit read at that address. As soon as that (first) read completes, the result is used as a base address for the second read. The second memory address is then computed as that first read result plus the second 16-bit offset. The read port then initiates the second read immediately, without waiting for a *read complete* operation on the first read. The same process then continues for subsequent reads until the pointer-following read sequence is complete.
+Pointer-follwing read operations take two arguments. The first argument in the accumulator ***a*** is the first (base) memory address, as with other read operations. The second parameter to a pointer-following read, in the accumulator backup register ***a1***, is a 64-bit value containing four (4) signed 16-bit offsets. The pointer following read starts by adding the first (lowest bits) 16-bit offset to the (first) address and initiates a 64-bit memory read at that address. As soon as that (first) read completes, the result is used as a base address for the second read. The second memory address is then computed as that first read result plus the second 16-bit offset. The read port then initiates the second read immediately, without waiting for a *read complete* operation on the first read. The same process then continues for subsequent reads until the pointer-following read sequence is complete, or is stalled by an invalid or protected memory address.
 
-The special offset value 0x8000 is used as a marker for the end of the pointer-following read sequence. As soon as the value 0x8000 is seen as the next offset value, the pointer-folowing read is complete and no further reads are performed. For example a 64-bit pointer-following offset value of 0x000080008ff20008 specifies a sequence of two (2) pointer-following reads, where the first offset is 8, and the second offset is -8.
+The special offset value 0x8000 is used as a marker for the end of the pointer-following read sequence. As soon as the value 0x8000 is seen as the next offset value, the pointer-folowing read is considered complete and no further reads are performed. For example a 64-bit pointer-following offset value of 0x00008000fff80008 specifies a sequence of two (2) pointer-following reads, where the first offset is 8, and the second offset is -8.
 
-Like normal asynchronous reads, pointer-following reads also *sniff* write activity in any of the MAM memory units, until the read has been explicitly completed through a *complete read* operation. If any write operation in any MAM memory unit overlaps with any of the addresses used for one of the sequence of pointer-following reads, the pointer-following read is replayed again from the overwritten address, even if additional reads in the sequence have already been completed. In this manner the *complete read* for any one of the sequence of pointer-following reads defines the memory state of the read operation as a whole, just as is the case with simple read operations. Similarly the *read complete* operation defines the point at which page faults are raised. The only subtlety with read completion of a pointer-following read (sequence) is that it is legal to execute a *complete read* on any of the reads in the sequence at any time. If earlier reads in the sequence have not been explicitly completed at that time, then the read complete of the later read in the sequence explicitly first completes any incomplete earlier reads in the sequence, which of course could generate page faults for the earlier reads.
+Like normal asynchronous reads, pointer-following reads also *snoop* write activity in any of the MAM memory units, until the read has been explicitly completed through a *complete read* operation. If any write operation in any MAM memory unit overlaps with any of the addresses used for one of the sequence of pointer-following reads, the pointer-following read is replayed again from the overwritten address, even if additional reads in the sequence have already been completed. In this manner the *complete read* for any one of the sequence of pointer-following reads defines the memory state of the read operation, just as is the case with simple read operations. Similarly the *read complete* operation defines the point at which page faults are raised. The only subtlety with read completion of a pointer-following read (sequence) is that it is legal to execute a *complete read* on any of the reads in the sequence at any time. If earlier reads in the sequence have not been explicitly completed at that time, then the read complete of the later read in the sequence explicitly first completes any incomplete earlier reads in the sequence, which of course could generate page faults for the earlier reads.
 
-In terms of hardware implementation of pointer-following reads, it is expected that at a minimum a MAM implementation will asynchronously continue execution of pointer-following reads, in the absence of explicit read completion. However, it is also anticipated that further hardware optimisations are possible, including pushing pointer/offset following logic into the memory cache layers and even the DRAM controller, in order to avoid entirely sequential communications between the processor and more distant and relatively high-latency cache layers and DRAM itself. Such optimisations are expected to significantly improve performance of *graph database* applications.
+In terms of hardware implementation of pointer-following reads, it is expected that at a minimum a MAM implementation will asynchronously continue execution of pointer-following reads, in the absence of explicit read completion. However, it is also anticipated that further hardware optimisations are possible, including pushing pointer/offset following logic into the memory cache layers and even the DRAM controller, in order to avoid entirely sequential communications between the processor and more distant and relatively high-latency cache layers and even DRAM itself. Such optimisations are expected to significantly improve performance of *graph query* applications.
 
 ##### MAM Memory Cache Line Zero
 
