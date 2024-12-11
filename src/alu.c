@@ -90,7 +90,7 @@ static void push(Alu* alu, v64 v) {
 #define S(a) a##b = 1; a
 #define V(a) (assert(a##b), a)
 
-void exe0(Mam *mam, Alu *alu, AO o) {
+void aluexe0(Mam *mam, Alu *alu, AO o) {
 	v64 a0 = 0, a1 = 0, r = 0;
 	bool a0b = 0, a1b = 0, rb = 0;
 
@@ -124,7 +124,6 @@ void exe0(Mam *mam, Alu *alu, AO o) {
 		case v64t: S(a1) = a1; break;
 		default: assert(0 && "invalid a1 type");
 		}
-		assert(op->ta1 != v64t && !a1b);
 	}
 	if (op->na >= 1) {
 		S(a0) = pop(alu);
@@ -206,9 +205,9 @@ void exe0(Mam *mam, Alu *alu, AO o) {
 	case AOishl32:    S(ri32) = (V(a0i32) << (u32)V(a1i32)); break;
 	case AOirotr32:   alu->err = AluNoImpl; break;
 
-	case AOisar64:    S(ri64) = (V(a0i64) >> (u64)V(a1i64)); break;
-	case AOishr64:    S(ri64) = (i64)((u64)V(a0i64) >> (u64)V(a1i64)); break;
-	case AOishl64:    S(ri64) = (V(a0i64) << (u64)V(a1i64)); break;
+	case AOisar64:    S(ri64) = (V(a0i64) >> (u64)V(a1i32)); break;
+	case AOishr64:    S(ri64) = (i64)((u64)V(a0i64) >> (u64)V(a1i32)); break;
+	case AOishl64:    S(ri64) = (V(a0i64) << (u64)V(a1i32)); break;
 	case AOirotr64:   alu->err = AluNoImpl; break;
 
 /* Bits */
@@ -316,16 +315,18 @@ void exe0(Mam *mam, Alu *alu, AO o) {
 	case AOreg2:      S(r) = regr(alu, 2); break;
 	case AOreg3:      S(r) = regr(alu, 3); break;
 	
-/* Register write */
-	case AOregw0:
+/* Register write popping */
 	case AOregp0:     regw(alu, 0, V(a0)); break;
-	case AOregw1:
-	case AOregp1:     regw(alu, 2, V(a0)); break;
-	case AOregw2:
-	case AOregp2:     regw(alu, 3, V(a0)); break;
-	case AOregw3:
-	case AOregp3:     regw(alu, 4, V(a0)); break;
+	case AOregp1:     regw(alu, 1, V(a0)); break;
+	case AOregp2:     regw(alu, 2, V(a0)); break;
+	case AOregp3:     regw(alu, 3, V(a0)); break;
 
+/* Register write non-popping */
+	case AOregw0:     regw(alu, 0, V(a0)); S(r) = a0; break;
+	case AOregw1:     regw(alu, 1, V(a0)); S(r) = a0; break;
+	case AOregw2:     regw(alu, 2, V(a0)); S(r) = a0; break;
+	case AOregw3:     regw(alu, 3, V(a0)); S(r) = a0; break;
+		
 /* Remote alu TOS access */
 	case AOtos0:
 	case AOtos1:
@@ -343,6 +344,7 @@ void exe0(Mam *mam, Alu *alu, AO o) {
 	case AOsel1:
 	case AOsel2:
 	case AOsel3:
+		S(r) = V(a1);
 		/* TODO */
 		alu->err = AluInvOp;
 		break;

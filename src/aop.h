@@ -82,8 +82,8 @@ AO(fneg64,   T(f64t,vxxt,f64t), S(1,1))
 
 AO(iceq32,   T(i32t,i32t,i64t), S(2,1))
 AO(icne32,   T(i32t,i32t,i64t), S(2,1))
-AO(iceq64,   T(i32t,i32t,i64t), S(2,1))
-AO(icne64,   T(i32t,i32t,i64t), S(2,1))
+AO(iceq64,   T(i64t,i64t,i64t), S(2,1))
+AO(icne64,   T(i64t,i64t,i64t), S(2,1))
 
 AO(icsge32,  T(i32t,i32t,i64t), S(2,1))
 AO(icsgt32,  T(i32t,i32t,i64t), S(2,1))

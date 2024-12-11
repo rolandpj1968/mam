@@ -87,3 +87,7 @@ struct Alu {
 typedef struct Mam Mam;
 struct Mam {
 };
+
+/* alu.c */
+void aluexe0(Mam *mam, Alu *alu, AO o);
+
