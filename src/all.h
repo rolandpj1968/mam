@@ -1,3 +1,21 @@
+#include <assert.h>
+#include <inttypes.h>
+#include <limits.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+typedef uint8_t u8;
+typedef uint16_t u16;
+typedef uint32_t u32;
+typedef uint64_t u64;
+typedef int8_t i8;
+typedef int16_t i16;
+typedef int32_t i32;
+typedef int64_t i64;
+typedef float f32;
+typedef double f64;
+
 typedef enum UnitT UnitT;
 enum UnitT {
 	AluU,
@@ -9,12 +27,12 @@ extern char* UNITS[];
 
 typedef enum Type Type;
 enum Type {
-	i32,
-	i64,
-	f32,
-	f64,
-	v64,
-	vxx,
+	i32t,
+	i64t,
+	f32t,
+	f64t,
+	v64t,
+	vxxt,
 };
 
 extern char* TYPES[];
@@ -39,8 +57,15 @@ struct AOp {
 	Type ta0;
 	Type ta1;
 	Type tr;
-	int na;
-	int nr;
+	u8 na;
+	u8 nr;
 };
 
 extern AOp aoptab[NAOp];
+
+typedef struct Alu Alu;
+struct Alu {
+	uint64_t reg[4];
+	uint64_t stk[4];
+	u8 tos;
+};
