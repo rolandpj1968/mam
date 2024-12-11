@@ -5,7 +5,7 @@ enum UnitT {
 	CtlU,
 };
 
-static char* UNITS[] = { "Alu", "Mem", "Ctl" };
+extern char* UNITS[];
 
 typedef enum Type Type;
 enum Type {
@@ -17,7 +17,7 @@ enum Type {
 	vxx,
 };
 
-static char* TYPES[] = {"i32", "i64", "f32", "f64", "v64", "xxx"};
+extern char* TYPES[];
 
 typedef enum AO AO;
 enum AO {
@@ -36,7 +36,8 @@ struct Op {
 typedef struct AOp AOp;
 struct AOp {
 	Op o;
-	Type ta;
+	Type ta0;
+	Type ta1;
 	Type tr;
 	int na;
 	int nr;
