@@ -429,6 +429,15 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOlitm7:		
 	case AOlitm8:     S(ri64) = -(i64)(o-AOlitm1+1); break;		
 
+/* Icache constants */
+	case AOi8con0:
+	case AOi8con1:
+	case AOi8con2:
+	case AOi8con3: {
+		S(ri64) = (i64)(i8)ctlicu8(&mam->ctl, (u8)(o-AOi8con0));
+		break;
+	}
+		
 /* Reserved opcodes */
 	case AOxxx1:
 	case AOxxx2:

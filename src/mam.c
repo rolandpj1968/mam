@@ -45,3 +45,8 @@ v64 mammemv(Mam *mam, u8 n, u8 m) {
 	/* TODO stall */
 	return mam->memv[n][m];
 }
+
+v64 mami8con(Mam *mam, u8 n) {
+	/* sign-extended */
+	return (v64)(i64)(i8)ctlicu8(&mam->ctl, n);
+}

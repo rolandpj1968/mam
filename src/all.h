@@ -26,8 +26,6 @@ enum UnitT {
 	CtlU,
 };
 
-extern char* UNITS[];
-
 typedef enum Type Type;
 enum Type {
 	i32t,
@@ -37,8 +35,6 @@ enum Type {
 	v64t,
 	vxxt,
 };
-
-extern char* TYPES[];
 
 typedef enum AO AO;
 enum AO {
@@ -64,8 +60,6 @@ struct AOp {
 	u8 nr;
 };
 
-extern AOp aoptab[NAOp];
-
 typedef enum AluErr AluErr;
 enum AluErr {
 	AluNoErr,
@@ -73,8 +67,6 @@ enum AluErr {
 	AluIDiv0,
 	AluNoImpl,
 };
-
-extern char* ALUERRS[];
 
 typedef struct Alu Alu;
 struct Alu {
@@ -89,15 +81,29 @@ struct Mem {
 	v64 v[2];
 };
 
+typedef struct Ctl Ctl;
+struct Ctl {
+	u64 ic[8];  /* active i-cache line */
+};	
+
 typedef struct Mam Mam;
 struct Mam {
 	v64 clk;
-	bool trap;
 	Alu alu[4];
+	Ctl ctl;
 	v64 alutos[4];
 	v64 memv[2][2];
+	bool trap;
 	int dbg;
 };
+
+/* util.c */
+extern char* UNITS[];
+extern char* TYPES[];
+extern char* ALUERRS[];
+
+/* aoptab.c */
+extern AOp aoptab[NAOp];
 
 /* alu.c */
 void aluexe0(Mam *mam, Alu *alu, AO o);
@@ -108,3 +114,10 @@ v64 alutos(Alu *alu);
 void mamtick(Mam *mam, u8 ao[4]);
 v64 mamalutos(Mam *mam, u8 n);
 v64 mammemv(Mam *mam, u8 n, u8 m);
+
+/* ctl.c */
+union u64u8x8 {
+	u64 v64;
+	u8 v8[8];
+};
+u8 ctlicu8(Ctl* ctl, u8 noff);

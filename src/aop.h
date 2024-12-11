@@ -29,7 +29,7 @@ AO(iudiv64,  T(i64t,i64t,i64t), S(2,1))
 AO(iurem64,  T(i64t,i64t,i64t), S(2,1))
 AO(imul64,   T(i64t,i64t,i64t), S(2,1))
 	
-/* Integer add with remote ALU tos */
+/* Integer add with remote ALU tos - PREVIOUS cycle */
 
 AO(iadd32r0, T(i32t,vxxt,i32t), S(1,1))
 AO(iadd32r1, T(i32t,vxxt,i32t), S(1,1))
@@ -134,7 +134,7 @@ AO(fcne64,   T(f64t,f64t,i64t), S(2,1))
 AO(fco64,    T(f64t,f64t,i64t), S(2,1))
 AO(fcuo64,   T(f64t,f64t,i64t), S(2,1))
 
-/* Integer comparisons with remote ALU tos */
+/* Integer comparisons with remote ALU tos - PREVIOUS cycle */
 
 AO(iceq32r0, T(i32t,vxxt,i64t), S(1,1))
 AO(iceq32r1, T(i32t,vxxt,i64t), S(1,1))
@@ -208,7 +208,7 @@ AO(regw1,    T(v64t,vxxt,v64t), S(1,1))
 AO(regw2,    T(v64t,vxxt,v64t), S(1,1))
 AO(regw3,    T(v64t,vxxt,v64t), S(1,1))
 
-/* Remote alu TOS access - THIS cycle's result */
+/* Remote alu TOS access - THIS cycle result */
 AO(alur0,     T(vxxt,vxxt,v64t), S(0,1))
 AO(alur1,     T(vxxt,vxxt,v64t), S(0,1))
 AO(alur2,     T(vxxt,vxxt,v64t), S(0,1))
@@ -220,7 +220,7 @@ AO(mem0v1,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem1v0,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem1v1,   T(vxxt,vxxt,v64t), S(0,1))
 
-/* Select using remote alu condition */
+/* Select using remote alu condition - PREVIOUS cycle */
 AO(selzr0,   T(v64t,v64t,v64t), S(2,1))
 AO(selzr1,   T(v64t,v64t,v64t), S(2,1))
 AO(selzr2,   T(v64t,v64t,v64t), S(2,1))
@@ -247,3 +247,10 @@ AO(litm5,    T(vxxt,vxxt,i64t), S(0,1))
 AO(litm6,    T(vxxt,vxxt,i64t), S(0,1))
 AO(litm7,    T(vxxt,vxxt,i64t), S(0,1))
 AO(litm8,    T(vxxt,vxxt,i64t), S(0,1))
+
+/* Icache constants */
+AO(i8con0,   T(vxxt,vxxt,i64t), S(0,1))
+AO(i8con1,   T(vxxt,vxxt,i64t), S(0,1))
+AO(i8con2,   T(vxxt,vxxt,i64t), S(0,1))
+AO(i8con3,   T(vxxt,vxxt,i64t), S(0,1))
+
