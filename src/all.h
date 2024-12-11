@@ -101,6 +101,7 @@ struct Mam {
 extern char* UNITS[];
 extern char* TYPES[];
 extern char* ALUERRS[];
+void wricu8(v64 ic[8], u8 noff, u8 v8);
 
 /* aoptab.c */
 extern AOp aoptab[NAOp];

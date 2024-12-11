@@ -1,8 +1,12 @@
 #include "all.h"
 
 static void add0to7slow(Mam *mam) {
-	mamtick(mam, (u8[4]){AOlit0,   AOlit2,   AOlit4,   AOlit6});
-	mamtick(mam, (u8[4]){AOlit1,   AOlit3,   AOlit5,   AOlit7});
+	wricu8(mam->ctl.ic, 0, (u8)4);
+	wricu8(mam->ctl.ic, 1, (u8)5);
+	wricu8(mam->ctl.ic, 2, (u8)6);
+	wricu8(mam->ctl.ic, 3, (u8)7);
+	mamtick(mam, (u8[4]){AOlit0,   AOlit2,   AOi8con0, AOi8con2});
+	mamtick(mam, (u8[4]){AOlit1,   AOlit3,   AOi8con1, AOi8con3});
 	mamtick(mam, (u8[4]){AOiadd32, AOiadd32, AOiadd32, AOiadd32});
 	mamtick(mam, (u8[4]){AOalur1,  AOnop,    AOalur3,  AOnop});
 	mamtick(mam, (u8[4]){AOiadd32, AOnop,    AOiadd32, AOnop});
@@ -13,8 +17,12 @@ static void add0to7slow(Mam *mam) {
 }
 
 static void add0to7fast(Mam *mam) {
-	mamtick(mam, (u8[4]){AOlit0,     AOlit2,   AOlit4,     AOlit6});
-	mamtick(mam, (u8[4]){AOlit1,     AOlit3,   AOlit5,     AOlit7});
+	wricu8(mam->ctl.ic, 0, (u8)4);
+	wricu8(mam->ctl.ic, 1, (u8)5);
+	wricu8(mam->ctl.ic, 2, (u8)6);
+	wricu8(mam->ctl.ic, 3, (u8)7);
+	mamtick(mam, (u8[4]){AOlit0,     AOlit2,   AOi8con0,   AOi8con2});
+	mamtick(mam, (u8[4]){AOlit1,     AOlit3,   AOi8con1,   AOi8con3});
 	mamtick(mam, (u8[4]){AOiadd32,   AOiadd32, AOiadd32,   AOiadd32});
 	mamtick(mam, (u8[4]){AOiadd32r1, AOnop,    AOiadd32r3, AOnop});
 	mamtick(mam, (u8[4]){AOiadd32r2, AOnop,    AOnop,      AOnop});
@@ -23,8 +31,12 @@ static void add0to7fast(Mam *mam) {
 }
 
 static void addm1tom8slow(Mam *mam) {
-	mamtick(mam, (u8[4]){AOlitm1,  AOlitm3,  AOlitm5,  AOlitm7});
-	mamtick(mam, (u8[4]){AOlitm2,  AOlitm4,  AOlitm6,  AOlitm8});
+	wricu8(mam->ctl.ic, 1, (u8)-5);
+	wricu8(mam->ctl.ic, 2, (u8)-6);
+	wricu8(mam->ctl.ic, 3, (u8)-7);
+	wricu8(mam->ctl.ic, 0, (u8)-8);
+	mamtick(mam, (u8[4]){AOlitm1,  AOlitm3,  AOi8con0, AOi8con2});
+	mamtick(mam, (u8[4]){AOlitm2,  AOlitm4,  AOi8con1, AOi8con3});
 	mamtick(mam, (u8[4]){AOiadd32, AOiadd32, AOiadd32, AOiadd32});
 	mamtick(mam, (u8[4]){AOalur1,  AOnop,    AOalur3,  AOnop});
 	mamtick(mam, (u8[4]){AOiadd32, AOnop,    AOiadd32, AOnop});
@@ -56,9 +68,8 @@ static void checkmam(Mam *mam) {
 }
 
 int main() {
-	printf("#ALU ops is %d\n", NAOp);
-	/* return 0; */
 	Mam mam = {0};
+	printf("#ALU ops is %d\n", NAOp);
 	//mam.dbg = 1;
 	checkmam(&mam);
 	add0to7slow(&mam);

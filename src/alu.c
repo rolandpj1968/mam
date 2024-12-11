@@ -414,20 +414,12 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOlit0:
 	case AOlit1:
 	case AOlit2:
-	case AOlit3:
-	case AOlit4:
-	case AOlit5:
-	case AOlit6:
-	case AOlit7:      S(ri64) = (i64)(o-AOlit0); break;
+	case AOlit3:      S(ri64) = (i64)(o-AOlit0); break;
 
 	case AOlitm1:		
 	case AOlitm2:		
 	case AOlitm3:		
-	case AOlitm4:		
-	case AOlitm5:		
-	case AOlitm6:		
-	case AOlitm7:		
-	case AOlitm8:     S(ri64) = -(i64)(o-AOlitm1+1); break;		
+	case AOlitm4:     S(ri64) = -(i64)(o-AOlitm1+1); break;		
 
 /* Icache constants */
 	case AOi8con0:
