@@ -1,6 +1,7 @@
 #include <assert.h>
 #include <inttypes.h>
 #include <limits.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -65,9 +66,21 @@ struct AOp {
 
 extern AOp aoptab[NAOp];
 
+typedef enum AluErr AluErr;
+enum AluErr {
+	AluNoErr,
+	AluInvOp,
+	AluIDiv0,
+};
+
 typedef struct Alu Alu;
 struct Alu {
 	u64 reg[4];
 	u64 stk[4];
 	u8 tos;
+	u8 err;
+};
+
+typedef struct Mam Mam;
+struct Mam {
 };
