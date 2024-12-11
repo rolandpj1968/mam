@@ -3,5 +3,5 @@
 #include "all.h"
 
 int main() {
-	printf("\n%d ALU ops\n\n", NAops);
+	printf("\n%d ALU ops\n\n", NAOp);
 }
