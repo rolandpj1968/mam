@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <assert.h>
-
 #include "all.h"
 
 int main() {

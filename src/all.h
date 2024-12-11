@@ -16,6 +16,8 @@ typedef int64_t i64;
 typedef float f32;
 typedef double f64;
 
+typedef u64 v64;
+
 typedef enum UnitT UnitT;
 enum UnitT {
 	AluU,
@@ -65,7 +67,7 @@ extern AOp aoptab[NAOp];
 
 typedef struct Alu Alu;
 struct Alu {
-	uint64_t reg[4];
-	uint64_t stk[4];
+	u64 reg[4];
+	u64 stk[4];
 	u8 tos;
 };
