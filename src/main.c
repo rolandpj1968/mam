@@ -1,5 +1,17 @@
 #include "all.h"
 
+static void add0to7(Mam *mam) {
+	mamtick(mam, (u8[4]){AOlit0,   AOlit2,   AOlit4,   AOlit6});
+	mamtick(mam, (u8[4]){AOlit1,   AOlit3,   AOlit5,   AOlit7});
+	mamtick(mam, (u8[4]){AOiadd32, AOiadd32, AOiadd32, AOiadd32});
+	mamtick(mam, (u8[4]){AOtos1,   AOnop,    AOtos3,   AOnop});
+	mamtick(mam, (u8[4]){AOiadd32, AOnop,    AOiadd32, AOnop});
+	mamtick(mam, (u8[4]){AOtos2,   AOnop,    AOnop,    AOnop});
+	mamtick(mam, (u8[4]){AOiadd32, AOnop,    AOnop,    AOnop});
+
+	printf("\n\nsum{0..7} = %lu\n\n", mamalutos(mam, 0));
+}
+
 static void checkmam(Mam *mam) {
 	for (int op = 0; op < NAOp;) {
 		u8 ao[4] = {op, op, op, op};
@@ -30,5 +42,7 @@ static void checkmam(Mam *mam) {
 
 int main() {
 	Mam mam = {0};
-	checkmam(&mam);
+	mam.dbg = 1;
+	//checkmam(&mam);
+	add0to7(&mam);
 }

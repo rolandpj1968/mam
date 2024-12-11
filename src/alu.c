@@ -411,9 +411,9 @@ void aluexe1(Mam *mam, Alu *alu, AO o) {
 
 /* Remote alu TOS access */
 	case AOtos0:   S(r) = mamalutos(mam, 0); break;
-	case AOtos1:   S(r) = mamalutos(mam, 0); break;
-	case AOtos2:   S(r) = mamalutos(mam, 0); break;
-	case AOtos3:   S(r) = mamalutos(mam, 0); break;
+	case AOtos1:   S(r) = mamalutos(mam, 1); break;
+	case AOtos2:   S(r) = mamalutos(mam, 2); break;
+	case AOtos3:   S(r) = mamalutos(mam, 3); break;
 
 /* Remote mem value access */
 	case AOmem0v0: S(r) = mammemv(mam, 0, 0); break;

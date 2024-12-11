@@ -96,6 +96,7 @@ struct Mam {
 	Alu alu[4];
 	v64 alutos[4];
 	v64 memv[2][2];
+	int dbg;
 };
 
 /* alu.c */
