@@ -46,6 +46,20 @@ static void addm1tom8slow(Mam *mam) {
 	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
 }
 
+static void addm1tom8fast(Mam *mam) {
+	wricu8(mam->ctl.ic, 1, (u8)-5);
+	wricu8(mam->ctl.ic, 2, (u8)-6);
+	wricu8(mam->ctl.ic, 3, (u8)-7);
+	wricu8(mam->ctl.ic, 0, (u8)-8);
+	mamtick(mam, (u8[4]){AOlitm1,    AOlitm3,  AOi8con0,   AOi8con2});
+	mamtick(mam, (u8[4]){AOlitm2,    AOlitm4,  AOi8con1,   AOi8con3});
+	mamtick(mam, (u8[4]){AOiadd32,   AOiadd32, AOiadd32,   AOiadd32});
+	mamtick(mam, (u8[4]){AOiadd32r1, AOnop,    AOiadd32r3, AOnop});
+	mamtick(mam, (u8[4]){AOiadd32r2, AOnop,    AOnop,      AOnop});
+
+	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
+}
+
 static void checkmam(Mam *mam) {
 	for (int op = 0; op < NAOp;) {
 		u8 ao[4] = {op, op, op, op};
@@ -70,9 +84,10 @@ static void checkmam(Mam *mam) {
 int main() {
 	Mam mam = {0};
 	printf("#ALU ops is %d\n", NAOp);
-	//mam.dbg = 1;
+	mam.dbg = 1;
 	checkmam(&mam);
 	add0to7slow(&mam);
 	add0to7fast(&mam);
 	addm1tom8slow(&mam);
+	addm1tom8fast(&mam);
 }
