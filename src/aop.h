@@ -64,12 +64,12 @@ AO(irotr64,   T(i64,i32,i64), S(2,1))
 AO(iand32,    T(i32,i32,i32), S(2,1))
 AO(ior32,     T(i32,i32,i32), S(2,1))
 AO(ixor32,    T(i32,i32,i32), S(2,1))
-AO(inot32,    T(i32,i32,i32), S(1,1))
+AO(inot32,    T(i32,vxx,i32), S(1,1))
 
 AO(iand64,    T(i64,i64,i64), S(2,1))
 AO(ior64,     T(i64,i64,i64), S(2,1))
 AO(ixor64,    T(i64,i64,i64), S(2,1))
-AO(inot64,    T(i64,i64,i64), S(1,1))
+AO(inot64,    T(i64,vxx,i64), S(1,1))
 
 /* Arithmetic Unary */
 
