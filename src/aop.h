@@ -30,6 +30,7 @@ AO(iurem64,  T(i64t,i64t,i64t), S(2,1))
 AO(imul64,   T(i64t,i64t,i64t), S(2,1))
 	
 /* Integer add with remote ALU tos */
+
 AO(iadd32r0, T(i32t,vxxt,i32t), S(1,1))
 AO(iadd32r1, T(i32t,vxxt,i32t), S(1,1))
 AO(iadd32r2, T(i32t,vxxt,i32t), S(1,1))
@@ -134,6 +135,7 @@ AO(fco64,    T(f64t,f64t,i64t), S(2,1))
 AO(fcuo64,   T(f64t,f64t,i64t), S(2,1))
 
 /* Integer comparisons with remote ALU tos */
+
 AO(iceq32r0, T(i32t,vxxt,i64t), S(1,1))
 AO(iceq32r1, T(i32t,vxxt,i64t), S(1,1))
 AO(iceq32r2, T(i32t,vxxt,i64t), S(1,1))

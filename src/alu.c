@@ -184,6 +184,24 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOiurem64:   S(ri64) = (i64)((u64)V(a0i64) % (u64)V(a1i64)); break;
 	case AOimul64:    S(ri64) = V(a0i64) * V(a1i64); break;
 	
+/* Integer add with remote ALU tos */
+	case AOiadd32r0:
+	case AOiadd32r1:
+	case AOiadd32r2:
+	case AOiadd32r3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOiadd32r0));
+		S(ri32) = V(a0i32) + (i32)a1r;
+		break;
+	}
+	case AOiadd64r0:
+	case AOiadd64r1:
+	case AOiadd64r2:
+	case AOiadd64r3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOiadd64r0));
+		S(ri64) = V(a0i64) + (i64)a1r;
+		break;
+	}
+
 	case AOfadd32:    S(rf32) = V(a0f32) + V(a1f32); break;
 	case AOfsub32:    S(rf32) = V(a0f32) + V(a1f32); break;
 	case AOfrsub32:   S(rf32) = V(a0f32) + V(a1f32); break;
@@ -271,6 +289,41 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOfcne64:    S(ri64) = (i64)(V(a0f64) != V(a1f64)); break;
 	case AOfco64:     alu->err = AluNoImpl; break;
 	case AOfcuo64:    alu->err = AluNoImpl; break;
+
+/* Integer comparisons with remote ALU tos */
+
+	case AOiceq32r0:
+	case AOiceq32r1:
+	case AOiceq32r2:
+	case AOiceq32r3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOiceq32r0));
+		S(ri64) = (i64)(V(a0i32) == (i32)a1r);
+		break;
+	}
+	case AOiceq64r0:
+	case AOiceq64r1:
+	case AOiceq64r2:
+	case AOiceq64r3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOiceq64r0));
+		S(ri64) = (i64)(V(a0i64) == (i64)a1r);
+		break;
+	}
+	case AOiclt32r0:
+	case AOiclt32r1:
+	case AOiclt32r2:
+	case AOiclt32r3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOiclt32r0));
+		S(ri64) = (i64)(V(a0i32) < (i32)a1r);
+		break;
+	}
+	case AOiclt64r0:
+	case AOiclt64r1:
+	case AOiclt64r2:
+	case AOiclt64r3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOiclt64r0));
+		S(ri64) = (i64)(V(a0i64) < (i64)a1r);
+		break;
+	}
 
 /* Extensions and Truncations */
 
