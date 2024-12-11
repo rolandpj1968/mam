@@ -71,7 +71,10 @@ enum AluErr {
 	AluNoErr,
 	AluInvOp,
 	AluIDiv0,
+	AluNoImpl,
 };
+
+extern char* ALUERRS[];
 
 typedef struct Alu Alu;
 struct Alu {
