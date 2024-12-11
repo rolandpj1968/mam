@@ -393,19 +393,19 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOmem1v1:    skip = 1; break;
 
 /* Select using remote alu condition */
-	case AOselz0:
-	case AOselz1:
-	case AOselz2:
-	case AOselz3: {
-		v64 c = mamalutos(mam, (u8)(o-AOselz0));
+	case AOselzr0:
+	case AOselzr1:
+	case AOselzr2:
+	case AOselzr3: {
+		v64 c = mamalutos(mam, (u8)(o-AOselzr0));
 		S(r) = c ? V(a1) : V(a0);
 		break;
 	}
-	case AOselnz0:
-	case AOselnz1:
-	case AOselnz2:
-	case AOselnz3: {
-		v64 c = mamalutos(mam, (u8)(o-AOselnz0));
+	case AOselnzr0:
+	case AOselnzr1:
+	case AOselnzr2:
+	case AOselnzr3: {
+		v64 c = mamalutos(mam, (u8)(o-AOselnzr0));
 		S(r) = c ? V(a0) : V(a1);
 		break;
 	}

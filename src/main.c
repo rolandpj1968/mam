@@ -22,6 +22,18 @@ static void add0to7fast(Mam *mam) {
 	printf("\n\nsum{0..7} = %lu\n\n", mamalutos(mam, 0));
 }
 
+static void addm1tom8slow(Mam *mam) {
+	mamtick(mam, (u8[4]){AOlitm1,  AOlitm3,  AOlitm5,  AOlitm7});
+	mamtick(mam, (u8[4]){AOlitm2,  AOlitm4,  AOlitm6,  AOlitm8});
+	mamtick(mam, (u8[4]){AOiadd32, AOiadd32, AOiadd32, AOiadd32});
+	mamtick(mam, (u8[4]){AOalur1,  AOnop,    AOalur3,  AOnop});
+	mamtick(mam, (u8[4]){AOiadd32, AOnop,    AOiadd32, AOnop});
+	mamtick(mam, (u8[4]){AOalur2,  AOnop,    AOnop,    AOnop});
+	mamtick(mam, (u8[4]){AOiadd32, AOnop,    AOnop,    AOnop});
+
+	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
+}
+
 static void checkmam(Mam *mam) {
 	for (int op = 0; op < NAOp;) {
 		u8 ao[4] = {op, op, op, op};
@@ -51,4 +63,5 @@ int main() {
 	checkmam(&mam);
 	add0to7slow(&mam);
 	add0to7fast(&mam);
+	addm1tom8slow(&mam);
 }

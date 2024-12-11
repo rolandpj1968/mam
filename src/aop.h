@@ -214,21 +214,21 @@ AO(alur1,     T(vxxt,vxxt,v64t), S(0,1))
 AO(alur2,     T(vxxt,vxxt,v64t), S(0,1))
 AO(alur3,     T(vxxt,vxxt,v64t), S(0,1))
 
-/* Remote mem value access */
+/* (Remote) Mem unit value access */
 AO(mem0v0,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem0v1,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem1v0,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem1v1,   T(vxxt,vxxt,v64t), S(0,1))
 
 /* Select using remote alu condition */
-AO(selz0,    T(v64t,v64t,v64t), S(2,1))
-AO(selz1,    T(v64t,v64t,v64t), S(2,1))
-AO(selz2,    T(v64t,v64t,v64t), S(2,1))
-AO(selz3,    T(v64t,v64t,v64t), S(2,1))
-AO(selnz0,   T(v64t,v64t,v64t), S(2,1))
-AO(selnz1,   T(v64t,v64t,v64t), S(2,1))
-AO(selnz2,   T(v64t,v64t,v64t), S(2,1))
-AO(selnz3,   T(v64t,v64t,v64t), S(2,1))
+AO(selzr0,   T(v64t,v64t,v64t), S(2,1))
+AO(selzr1,   T(v64t,v64t,v64t), S(2,1))
+AO(selzr2,   T(v64t,v64t,v64t), S(2,1))
+AO(selzr3,   T(v64t,v64t,v64t), S(2,1))
+AO(selnzr0,  T(v64t,v64t,v64t), S(2,1))
+AO(selnzr1,  T(v64t,v64t,v64t), S(2,1))
+AO(selnzr2,  T(v64t,v64t,v64t), S(2,1))
+AO(selnzr3,  T(v64t,v64t,v64t), S(2,1))
 
 /* Literal constants */
 AO(lit0,     T(vxxt,vxxt,i64t), S(0,1))
