@@ -426,7 +426,16 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOi8con1:
 	case AOi8con2:
 	case AOi8con3: {
+		/* sign-extended */
 		S(ri64) = (i64)(i8)ctlicu8(&mam->ctl, (u8)(o-AOi8con0));
+		break;
+	}
+	case AOi16con0:
+	case AOi16con1:
+	case AOi16con2:
+	case AOi16con3: {
+		/* sign-extended */
+		S(ri64) = (i64)(i16)ctlicu16(&mam->ctl, (u8)((o-AOi16con0)*2));
 		break;
 	}
 		

@@ -102,6 +102,7 @@ extern char* UNITS[];
 extern char* TYPES[];
 extern char* ALUERRS[];
 void wricu8(v64 ic[8], u8 noff, u8 v8);
+void wricu16(v64 ic[8], u8 noff, u16 v16);
 
 /* aoptab.c */
 extern AOp aoptab[NAOp];
@@ -122,3 +123,8 @@ union u64u8x8 {
 	u8 v8[8];
 };
 u8 ctlicu8(Ctl* ctl, u8 noff);
+union u64u16x4 {
+	u64 v64;
+	u16 v16[4];
+};
+u16 ctlicu16(Ctl* ctl, u8 noff);

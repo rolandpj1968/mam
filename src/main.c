@@ -60,6 +60,21 @@ static void addm1tom8fast(Mam *mam) {
 	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
 }
 
+static void addm1tom8fast16(Mam *mam) {
+	wricu16(mam->ctl.ic, 2, (u16)-5);
+	assert(ctlicu16(&mam->ctl, 2) == (u16)-5);
+	wricu16(mam->ctl.ic, 4, (u16)-6);
+	wricu16(mam->ctl.ic, 6, (u16)-7);
+	wricu16(mam->ctl.ic, 0, (u16)-8);
+	mamtick(mam, (u8[4]){AOlitm1,    AOlitm3,  AOi16con0,   AOi16con2});
+	mamtick(mam, (u8[4]){AOlitm2,    AOlitm4,  AOi16con1,   AOi16con3});
+	mamtick(mam, (u8[4]){AOiadd32,   AOiadd32, AOiadd32,   AOiadd32});
+	mamtick(mam, (u8[4]){AOiadd32r1, AOnop,    AOiadd32r3, AOnop});
+	mamtick(mam, (u8[4]){AOiadd32r2, AOnop,    AOnop,      AOnop});
+
+	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
+}
+
 static void checkmam(Mam *mam) {
 	for (int op = 0; op < NAOp;) {
 		u8 ao[4] = {op, op, op, op};
@@ -90,4 +105,5 @@ int main() {
 	add0to7fast(&mam);
 	addm1tom8slow(&mam);
 	addm1tom8fast(&mam);
+	addm1tom8fast16(&mam);
 }

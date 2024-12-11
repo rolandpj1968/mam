@@ -240,9 +240,23 @@ AO(litm2,    T(vxxt,vxxt,i64t), S(0,1))
 AO(litm3,    T(vxxt,vxxt,i64t), S(0,1))
 AO(litm4,    T(vxxt,vxxt,i64t), S(0,1))
 
+/* TODO 16,32,64 bit lits */
+
 /* Icache constants */
 AO(i8con0,   T(vxxt,vxxt,i64t), S(0,1))
 AO(i8con1,   T(vxxt,vxxt,i64t), S(0,1))
 AO(i8con2,   T(vxxt,vxxt,i64t), S(0,1))
 AO(i8con3,   T(vxxt,vxxt,i64t), S(0,1))
+AO(i16con0,  T(vxxt,vxxt,i64t), S(0,1))
+AO(i16con1,  T(vxxt,vxxt,i64t), S(0,1))
+AO(i16con2,  T(vxxt,vxxt,i64t), S(0,1))
+AO(i16con3,  T(vxxt,vxxt,i64t), S(0,1))
+/* AO(i32con0,  T(vxxt,vxxt,i64t), S(0,1)) */
+/* AO(i32con1,  T(vxxt,vxxt,i64t), S(0,1)) */
+/* AO(i32con2,  T(vxxt,vxxt,i64t), S(0,1)) */
+/* AO(i32con3,  T(vxxt,vxxt,i64t), S(0,1)) */
+/* AO(i64con0,  T(vxxt,vxxt,i64t), S(0,1)) */
+/* AO(i64con1,  T(vxxt,vxxt,i64t), S(0,1)) */
+/* AO(i64con2,  T(vxxt,vxxt,i64t), S(0,1)) */
+/* AO(i64con3,  T(vxxt,vxxt,i64t), S(0,1)) */
 
