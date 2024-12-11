@@ -13,10 +13,11 @@ enum Type {
 	i64,
 	f32,
 	f64,
-	tx,
+	v64,
+	vxx,
 };
 
-static char* TYPES[] = {"i32", "i64", "f32", "f64", "x"};
+static char* TYPES[] = {"i32", "i64", "f32", "f64", "v64", "xxx"};
 
 typedef enum AO AO;
 enum AO {
