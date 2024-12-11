@@ -343,11 +343,11 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOsel0:
 	case AOsel1:
 	case AOsel2:
-	case AOsel3:
-		S(r) = V(a1);
-		/* TODO */
-		alu->err = AluInvOp;
+	case AOsel3: {
+		v64 c = mamalutos(mam, (u8)(o-AOsel0));
+		S(r) = c ? V(a0) : V(a1);
 		break;
+	}
 
 /* TODO constants */
 	case AOxxx1:
@@ -379,7 +379,39 @@ Done:
 		case v64t: break;
 		default: assert(0 && "invalid r type");
 		}
-		assert(rb);
-		push(alu, r);
+		push(alu, V(r));
 	}
+}
+
+void aluexe1(Mam *mam, Alu *alu, AO o) {
+	v64 r = 0;
+	bool rb = 0;
+	bool skip = 0; /* everything except remote values */
+
+	switch (o) {
+
+/* Remote alu TOS access */
+	case AOtos0:   S(r) = mamalutos(mam, 0); break;
+	case AOtos1:   S(r) = mamalutos(mam, 0); break;
+	case AOtos2:   S(r) = mamalutos(mam, 0); break;
+	case AOtos3:   S(r) = mamalutos(mam, 0); break;
+
+/* Remote mem value access */
+	case AOmem0v0: S(r) = mammemv(mam, 0, 0); break;
+	case AOmem0v1: S(r) = mammemv(mam, 0, 1); break;
+	case AOmem1v0: S(r) = mammemv(mam, 1, 0); break;
+	case AOmem1v1: S(r) = mammemv(mam, 1, 1); break;
+
+	default: skip = 1; break;
+
+	}
+
+	if (skip || alu->err != AluNoErr)
+		return;
+
+	push(alu, V(r));
+}
+
+v64 alutos(Alu *alu) {
+	return stkr(alu, 0);
 }

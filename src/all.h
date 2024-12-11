@@ -84,10 +84,25 @@ struct Alu {
 	u8 err;
 };
 
+typedef struct Mem Mem;
+struct Mem {
+	v64 v[2];
+};
+
 typedef struct Mam Mam;
 struct Mam {
+	v64 clk;
+	Alu alu[4];
+	v64 alutos[4];
+	v64 memv[2][2];
 };
 
 /* alu.c */
 void aluexe0(Mam *mam, Alu *alu, AO o);
+void aluexe1(Mam *mam, Alu *alu, AO o);
+v64 alutos(Alu *alu);
 
+/* mam.c */
+void mamtick(Mam *mam, AO ao[4]);
+v64 mamalutos(Mam *mam, u8 n);
+v64 mammemv(Mam *mam, u8 n, u8 m);
