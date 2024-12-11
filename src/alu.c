@@ -328,10 +328,10 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOregw3:     regw(alu, 3, V(a0)); S(r) = a0; break;
 		
 /* Remote alu TOS access */
-	case AOtos0:
-	case AOtos1:
-	case AOtos2:
-	case AOtos3:
+	case AOalur0:
+	case AOalur1:
+	case AOalur2:
+	case AOalur3:
 
 /* Remote mem value access */
 	case AOmem0v0:
@@ -340,11 +340,19 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOmem1v1:    skip = 1; break;
 
 /* Select using remote alu condition */
-	case AOsel0:
-	case AOsel1:
-	case AOsel2:
-	case AOsel3: {
-		v64 c = mamalutos(mam, (u8)(o-AOsel0));
+	case AOselz0:
+	case AOselz1:
+	case AOselz2:
+	case AOselz3: {
+		v64 c = mamalutos(mam, (u8)(o-AOselz0));
+		S(r) = c ? V(a1) : V(a0);
+		break;
+	}
+	case AOselnz0:
+	case AOselnz1:
+	case AOselnz2:
+	case AOselnz3: {
+		v64 c = mamalutos(mam, (u8)(o-AOselnz0));
 		S(r) = c ? V(a0) : V(a1);
 		break;
 	}
@@ -410,10 +418,10 @@ void aluexe1(Mam *mam, Alu *alu, AO o) {
 	switch (o) {
 
 /* Remote alu TOS access */
-	case AOtos0:   S(r) = mamalutos(mam, 0); break;
-	case AOtos1:   S(r) = mamalutos(mam, 1); break;
-	case AOtos2:   S(r) = mamalutos(mam, 2); break;
-	case AOtos3:   S(r) = mamalutos(mam, 3); break;
+	case AOalur0:   S(r) = mamalutos(mam, 0); break;
+	case AOalur1:   S(r) = mamalutos(mam, 1); break;
+	case AOalur2:   S(r) = mamalutos(mam, 2); break;
+	case AOalur3:   S(r) = mamalutos(mam, 3); break;
 
 /* Remote mem value access */
 	case AOmem0v0: S(r) = mammemv(mam, 0, 0); break;
