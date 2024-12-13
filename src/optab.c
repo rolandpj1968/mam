@@ -7,3 +7,9 @@ AOp aoptab[NAOp] = {
 #include "aop.h"
 #undef AO
 };
+
+COp coptab[NCOp] = {
+#define CO(op) [CO##op]={.o = {.unit = CtlU, .name = #op}},
+#include "cop.h"
+#undef CO
+};

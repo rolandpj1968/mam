@@ -111,17 +111,48 @@ struct Ins {
 
 #define I(ao0, ao1, ao2, ao3) bundle2ins(B(ao0, ao1, ao2, ao3))
 
+typedef enum CO CO;
+enum CO {
+#define CO(op) CO##op,
+#include "cop.h"
+#undef CO
+	NCOp,
+};
+
+typedef struct COp COp;
+struct COp {
+	Op o;
+};
+
+typedef enum CtlErr CtlErr;
+enum CtlErr {
+	CtlNoErr,
+	AluHlt,
+};
+
 typedef struct Ctl Ctl;
 struct Ctl {
-	v64 ip, ip1, il, sp, bp;
+	v64 ip, jp, il, sp, bp;
 	Bundle ib;
 	CLine ic;  /* active i-cache line */
 	CLine ic0; /* next i-cache line linearly */
-	CLine ic1; /* jump target i-cache line */
+	CLine jc;  /* jump target i-cache line */
+	u8 err;
+};
+
+/* RAM/ROM/Device */
+typedef struct Dram Dram;
+struct Dram {
+	bool wr; /* 1 iff writeable */
+	v64 addr;
+	v64 len;
+	CLine *m;
 };
 
 typedef struct Mam Mam;
 struct Mam {
+	u8 ndram;
+	Dram **dram;
 	v64 clk;
 	Alu alu[4];
 	Ctl ctl;
@@ -145,8 +176,9 @@ Ins bundle2ins(Bundle b);
 void mamexeb(Mam *mam, Bundle b);
 void mamexei(Mam *mam, Ins i);
 
-/* aoptab.c */
+/* optab.c */
 extern AOp aoptab[NAOp];
+extern COp coptab[NCOp];
 
 /* alu.c */
 void aluexe0(Mam *mam, Alu *alu, AO o);
@@ -157,6 +189,9 @@ v64 alutos(Alu *alu);
 void mamtick(Mam *mam);
 v64 mamalutos(Mam *mam, u8 n);
 v64 mammemv(Mam *mam, u8 n, u8 m);
+
+/* coptab.c */
+extern COp coptab[NCOp];
 
 /* ctl.c */
 u8 ctlicu8(Ctl* ctl, u8 noff);
