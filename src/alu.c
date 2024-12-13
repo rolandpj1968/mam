@@ -440,17 +440,6 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	}
 		
 /* Reserved opcodes */
-	case AOxxx1:
-	case AOxxx2:
-	case AOxxx3:
-	case AOxxx4:
-	case AOxxx5:
-	case AOxxx6:
-	case AOxxx7:
-	case AOxxx29:
-	case AOxxx30:
-	case AOxxx37:
-	case AOxxx38:
 	default:
 		alu->err = AluInvOp;
 		break;

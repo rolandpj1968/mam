@@ -97,12 +97,34 @@ struct Mam {
 	int dbg;
 };
 
+static const u8 BA0 = 1, BA1 = 2, BA2 = 3, BA3 = 4;
+static const u8 BM0 = 5, BM1 = 6;
+static const u8 BC = 7;
+
+/* raw per-slot ops */
+typedef struct Bundle Bundle;
+struct Bundle {
+	u8 op[8];
+};
+
+static const u8 IF = 0;
+
+/* compressed format */
+typedef struct Ins Ins;
+struct Ins {
+	u8 op[8];
+};
+
+
 /* util.c */
 extern char* UNITS[];
 extern char* TYPES[];
 extern char* ALUERRS[];
 void wricu8(v64 ic[8], u8 noff, u8 v8);
 void wricu16(v64 ic[8], u8 noff, u16 v16);
+Bundle mkbundle(AO ao0, AO ao1, AO ao2, AO ao3, u8 mo0, u8 mo1, u8 co0);
+Bundle ins2bundle(Ins i, u8 *plen);
+Ins bundle2ins(Bundle b, u8 *plen);
 
 /* aoptab.c */
 extern AOp aoptab[NAOp];
