@@ -97,7 +97,7 @@ static void checkmam(Mam *mam) {
 int main() {
 	Mam mam = {0};
 	printf("#ALU ops is %d\n", NAOp);
-	mam.dbg = 1;
+	mam.dbg = 0;
 	checkmam(&mam);
 	add0to7slow(&mam);
 	add0to7fast(&mam);

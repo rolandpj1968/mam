@@ -134,6 +134,8 @@ extern char* TYPES[];
 extern char* ALUERRS[];
 void wricu8(CLine *ic, u8 noff, u8 v8);
 void wricu16(CLine *ic, u8 noff, u16 v16);
+void wricu32(CLine *ic, u8 noff, u32 v32);
+void wricu64(CLine *ic, u8 noff, u64 v64);
 Bundle mkbundle(AO ao0, AO ao1, AO ao2, AO ao3, u8 mo0, u8 mo1, u8 co0);
 Bundle ins2bundle(Ins i, u8 *plen);
 Ins bundle2ins(Bundle b, u8 *plen);
@@ -154,3 +156,5 @@ v64 mammemv(Mam *mam, u8 n, u8 m);
 /* ctl.c */
 u8 ctlicu8(Ctl* ctl, u8 noff);
 u16 ctlicu16(Ctl* ctl, u8 noff);
+u32 ctlicu32(Ctl* ctl, u8 noff);
+u64 ctlicu64(Ctl* ctl, u8 noff);

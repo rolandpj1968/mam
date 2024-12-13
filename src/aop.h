@@ -276,12 +276,12 @@ AO(i16con0,  T(vxxt,vxxt,i64t), S(0,1))
 AO(i16con1,  T(vxxt,vxxt,i64t), S(0,1))
 AO(i16con2,  T(vxxt,vxxt,i64t), S(0,1))
 AO(i16con3,  T(vxxt,vxxt,i64t), S(0,1))
-/* AO(i32con0,  T(vxxt,vxxt,i64t), S(0,1)) */
-/* AO(i32con1,  T(vxxt,vxxt,i64t), S(0,1)) */
-/* AO(i32con2,  T(vxxt,vxxt,i64t), S(0,1)) */
-/* AO(i32con3,  T(vxxt,vxxt,i64t), S(0,1)) */
-/* AO(i64con0,  T(vxxt,vxxt,i64t), S(0,1)) */
-/* AO(i64con1,  T(vxxt,vxxt,i64t), S(0,1)) */
-/* AO(i64con2,  T(vxxt,vxxt,i64t), S(0,1)) */
-/* AO(i64con3,  T(vxxt,vxxt,i64t), S(0,1)) */
+AO(i32con0,  T(vxxt,vxxt,i64t), S(0,1))
+AO(i32con1,  T(vxxt,vxxt,i64t), S(0,1))
+AO(i32con2,  T(vxxt,vxxt,i64t), S(0,1))
+AO(i32con3,  T(vxxt,vxxt,i64t), S(0,1))
+AO(i64con0,  T(vxxt,vxxt,i64t), S(0,1))
+AO(i64con1,  T(vxxt,vxxt,i64t), S(0,1))
+AO(i64con2,  T(vxxt,vxxt,i64t), S(0,1))
+AO(i64con3,  T(vxxt,vxxt,i64t), S(0,1))
 

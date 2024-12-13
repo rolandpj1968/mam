@@ -17,6 +17,18 @@ void wricu16(CLine *ic, u8 noff, u16 v16) {
 	ic->u16[(64-2-noff)/2] = v16;
 }
 
+void wricu32(CLine *ic, u8 noff, u32 v32) {
+	assert(noff < 64);
+	assert((noff&3) == 0);
+	ic->u32[(64-4-noff)/4] = v32;
+}
+
+void wricu64(CLine *ic, u8 noff, u64 v64) {
+	assert(noff < 64);
+	assert((noff&7) == 0);
+	ic->u64[(64-8-noff)/8] = v64;
+}
+
 Bundle mkbundle(AO ao0, AO ao1, AO ao2, AO ao3, u8 mo0, u8 mo1, u8 co0) {
 	Bundle b = {0};
 	b.op[BA0] = ao0;

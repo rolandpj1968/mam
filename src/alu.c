@@ -438,6 +438,21 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 		S(ri64) = (i64)(i16)ctlicu16(&mam->ctl, (u8)((o-AOi16con0)*2));
 		break;
 	}
+	case AOi32con0:
+	case AOi32con1:
+	case AOi32con2:
+	case AOi32con3: {
+		/* sign-extended */
+		S(ri64) = (i64)(i32)ctlicu32(&mam->ctl, (u8)((o-AOi32con0)*4));
+		break;
+	}
+	case AOi64con0:
+	case AOi64con1:
+	case AOi64con2:
+	case AOi64con3: {
+		S(ri64) = (i64)ctlicu64(&mam->ctl, (u8)((o-AOi64con0)*8));
+		break;
+	}
 		
 /* Reserved opcodes */
 	default:
