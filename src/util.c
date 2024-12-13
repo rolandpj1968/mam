@@ -6,23 +6,15 @@ char* TYPES[] = {"i32", "i64", "f32", "f64", "v64", "---"};
 
 char* ALUERRS[] = {"none", "invi", "div0", "impl"};
 
-void wricu8(v64 ic[8], u8 noff, u8 v8) {
-	union u64u8x8 *pu64u8x8;
-	assert(((u64)ic & 3) == 0);
+void wricu8(CLine *ic, u8 noff, u8 v8) {
 	assert(noff < 64);
-	u8 noff64 = noff >> 3;
-	pu64u8x8 = (union u64u8x8*)&ic[8-1-noff64];
-	pu64u8x8->v8[8-1-(noff&7)] = v8;
+	ic->u8[64-1-noff] = v8;
 }
 
-void wricu16(v64 ic[8], u8 noff, u16 v16) {
-	union u64u16x4 *pu64u16x4;
-	assert(((u64)ic & 3) == 0);
-	assert((noff & 1) == 0);
+void wricu16(CLine *ic, u8 noff, u16 v16) {
 	assert(noff < 64);
-	u8 noff64 = noff >> 3;
-	pu64u16x4 = (union u64u16x4*)&ic[8-1-noff64];
-	pu64u16x4->v16[4-1-(noff&7)/2] = v16;
+	assert((noff&1) == 0);
+	ic->u16[(64-2-noff)/2] = v16;
 }
 
 Bundle mkbundle(AO ao0, AO ao1, AO ao2, AO ao3, u8 mo0, u8 mo1, u8 co0) {

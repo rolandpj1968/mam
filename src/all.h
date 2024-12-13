@@ -81,9 +81,20 @@ struct Mem {
 	v64 v[2];
 };
 
+typedef union CLine CLine;
+union CLine {
+	u8 u8[64];
+	u16 u16[32];
+	u32 u32[16];
+	u64 u64[8];
+};
+
 typedef struct Ctl Ctl;
 struct Ctl {
-	u64 ic[8];  /* active i-cache line */
+	v64 ip, ip1, il, sp, bp;
+	CLine ic;  /* active i-cache line */
+	CLine ic0; /* next i-cache line linearly */
+	CLine ic1; /* jump target i-cache line */
 };	
 
 typedef struct Mam Mam;
@@ -121,8 +132,8 @@ struct Ins {
 extern char* UNITS[];
 extern char* TYPES[];
 extern char* ALUERRS[];
-void wricu8(v64 ic[8], u8 noff, u8 v8);
-void wricu16(v64 ic[8], u8 noff, u16 v16);
+void wricu8(CLine *ic, u8 noff, u8 v8);
+void wricu16(CLine *ic, u8 noff, u16 v16);
 Bundle mkbundle(AO ao0, AO ao1, AO ao2, AO ao3, u8 mo0, u8 mo1, u8 co0);
 Bundle ins2bundle(Ins i, u8 *plen);
 Ins bundle2ins(Bundle b, u8 *plen);
@@ -141,13 +152,5 @@ v64 mamalutos(Mam *mam, u8 n);
 v64 mammemv(Mam *mam, u8 n, u8 m);
 
 /* ctl.c */
-union u64u8x8 {
-	u64 v64;
-	u8 v8[8];
-};
 u8 ctlicu8(Ctl* ctl, u8 noff);
-union u64u16x4 {
-	u64 v64;
-	u16 v16[4];
-};
 u16 ctlicu16(Ctl* ctl, u8 noff);
