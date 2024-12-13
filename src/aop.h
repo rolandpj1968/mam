@@ -189,36 +189,61 @@ AO(stk0,     T(vxxt,vxxt,v64t), S(0,1))
 AO(stk1,     T(vxxt,vxxt,v64t), S(0,1))
 AO(stk2,     T(vxxt,vxxt,v64t), S(0,1))
 AO(stk3,     T(vxxt,vxxt,v64t), S(0,1))
+AO(xxx148,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx149,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx150,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx151,   T(vxxt,vxxt,vxxt), S(0,0))
 	
 /* Register read */
 AO(reg0,     T(vxxt,vxxt,v64t), S(0,1))
 AO(reg1,     T(vxxt,vxxt,v64t), S(0,1))
 AO(reg2,     T(vxxt,vxxt,v64t), S(0,1))
 AO(reg3,     T(vxxt,vxxt,v64t), S(0,1))
+AO(xxx156,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx157,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx158,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx159,   T(vxxt,vxxt,vxxt), S(0,0))
 	
 /* Register write popping */
 AO(regp0,    T(v64t,vxxt,vxxt), S(1,0))
 AO(regp1,    T(v64t,vxxt,vxxt), S(1,0))
 AO(regp2,    T(v64t,vxxt,vxxt), S(1,0))
 AO(regp3,    T(v64t,vxxt,vxxt), S(1,0))
+AO(xxx164,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx165,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx166,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx167,   T(vxxt,vxxt,vxxt), S(0,0))
 	
 /* Register write non-popping */
 AO(regw0,    T(v64t,vxxt,v64t), S(1,1))
 AO(regw1,    T(v64t,vxxt,v64t), S(1,1))
 AO(regw2,    T(v64t,vxxt,v64t), S(1,1))
 AO(regw3,    T(v64t,vxxt,v64t), S(1,1))
+AO(xxx172,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx173,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx174,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx175,   T(vxxt,vxxt,vxxt), S(0,0))
 
 /* Remote alu TOS access - THIS cycle result */
-AO(alur0,     T(vxxt,vxxt,v64t), S(0,1))
-AO(alur1,     T(vxxt,vxxt,v64t), S(0,1))
-AO(alur2,     T(vxxt,vxxt,v64t), S(0,1))
-AO(alur3,     T(vxxt,vxxt,v64t), S(0,1))
+AO(alur0,    T(vxxt,vxxt,v64t), S(0,1))
+AO(alur1,    T(vxxt,vxxt,v64t), S(0,1))
+AO(alur2,    T(vxxt,vxxt,v64t), S(0,1))
+AO(alur3,    T(vxxt,vxxt,v64t), S(0,1))
 
 /* (Remote) Mem unit value access */
 AO(mem0v0,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem0v1,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem1v0,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem1v1,   T(vxxt,vxxt,v64t), S(0,1))
+
+AO(xxx184,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx185,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx186,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx187,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx188,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx189,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx190,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx191,   T(vxxt,vxxt,vxxt), S(0,0))
 
 /* Select using remote alu condition - PREVIOUS cycle */
 AO(selzr0,   T(v64t,v64t,v64t), S(2,1))

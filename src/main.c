@@ -106,4 +106,5 @@ int main() {
 	addm1tom8slow(&mam);
 	addm1tom8fast(&mam);
 	addm1tom8fast16(&mam);
+	printf("\n#ALU ops is %d\n\n", NAOp);
 }
