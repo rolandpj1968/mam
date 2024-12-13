@@ -107,6 +107,8 @@ struct Bundle {
 	u8 op[8];
 };
 
+#define B(ao0, ao1, ao2, ao3) mkbundle(ao0, ao1, ao2, ao3, 0, 0, 0)
+
 static const u8 IF = 0;
 
 /* compressed format */
@@ -114,7 +116,6 @@ typedef struct Ins Ins;
 struct Ins {
 	u8 op[8];
 };
-
 
 /* util.c */
 extern char* UNITS[];
@@ -135,7 +136,7 @@ void aluexe1(Mam *mam, Alu *alu, AO o);
 v64 alutos(Alu *alu);
 
 /* mam.c */
-void mamtick(Mam *mam, u8 ao[4]);
+void mamtick(Mam *mam, Bundle b);
 v64 mamalutos(Mam *mam, u8 n);
 v64 mammemv(Mam *mam, u8 n, u8 m);
 

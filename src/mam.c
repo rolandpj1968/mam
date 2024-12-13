@@ -6,8 +6,10 @@ static void mamtrap(Mam *mam, u8 n) {
 	mam->alu[n].err = AluNoErr;
 }
 
+static const u8 AOPIDX[4] = {1, 2, 3, 4};
+
 /* For now... eventually we read code from "memory" */
-void mamtick(Mam *mam, u8 ao[4]) {
+void mamtick(Mam *mam, Bundle b) {
 	mam->clk++;
 	mam->trap = 0;
 	for (u8 n = 0; n < 4; n++) {
@@ -21,13 +23,13 @@ void mamtick(Mam *mam, u8 ao[4]) {
 		}
 	}
 	for (u8 n = 0; n < 4; n++) {
-		aluexe0(mam, &mam->alu[n], ao[n]);
+		aluexe0(mam, &mam->alu[n], b.op[AOPIDX[n]]);
 	}
 	for (u8 n = 0; n < 4; n++) {
 		mam->alutos[n] = alutos(&mam->alu[n]);
 	}
 	for (u8 n = 0; n < 4; n++) {
-		aluexe1(mam, &mam->alu[n], ao[n]);
+		aluexe1(mam, &mam->alu[n], b.op[AOPIDX[n]]);
 	}
 	if (mam->dbg >= 1) {
 		printf("DBG: clk %10lu - %16lx ALU[0] / %16lx ALU[1] / %16lx ALU[2] / 0x%16lx ALU[3]\n", mam->clk, mamalutos(mam, 0), mamalutos(mam, 1), mamalutos(mam, 2), mamalutos(mam, 3));
