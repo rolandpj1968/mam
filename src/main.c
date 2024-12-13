@@ -90,7 +90,7 @@ static void checkmam(Mam *mam) {
 		} else {
 			printf("    clk %3lu: trap cycle\n", mam->clk);
 		}
-	}	
+	}
 	printf("\nDone!\n\n");
 }
 

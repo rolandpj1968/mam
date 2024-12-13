@@ -118,7 +118,7 @@ struct Ctl {
 	CLine ic;  /* active i-cache line */
 	CLine ic0; /* next i-cache line linearly */
 	CLine ic1; /* jump target i-cache line */
-};	
+};
 
 typedef struct Mam Mam;
 struct Mam {

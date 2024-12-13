@@ -28,7 +28,7 @@ AO(irem64,   T(i64t,i64t,i64t), S(2,1))
 AO(iudiv64,  T(i64t,i64t,i64t), S(2,1))
 AO(iurem64,  T(i64t,i64t,i64t), S(2,1))
 AO(imul64,   T(i64t,i64t,i64t), S(2,1))
-	
+
 /* Integer add with remote ALU tos - PREVIOUS cycle */
 
 AO(iadd32r0, T(i32t,vxxt,i32t), S(1,1))
@@ -59,7 +59,7 @@ AO(frem64,   T(f64t,f64t,f64t), S(2,1))
 AO(xxx37,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx38,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(fmul64,   T(f64t,f64t,f64t), S(2,1))
-	
+
 /* Shift Binary */
 
 AO(isar32,   T(i32t,i32t,i32t), S(2,1))
@@ -90,7 +90,7 @@ AO(ineg32,   T(i32t,vxxt,i32t), S(1,1))
 AO(ineg64,   T(i64t,vxxt,i64t), S(1,1))
 AO(fneg32,   T(f32t,vxxt,f32t), S(1,1))
 AO(fneg64,   T(f64t,vxxt,f64t), S(1,1))
-	
+
 /* Comparisons */
 
 AO(iceq32,   T(i32t,i32t,i64t), S(2,1))
@@ -193,7 +193,7 @@ AO(xxx148,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx149,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx150,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx151,   T(vxxt,vxxt,vxxt), S(0,0))
-	
+
 /* Register read */
 AO(reg0,     T(vxxt,vxxt,v64t), S(0,1))
 AO(reg1,     T(vxxt,vxxt,v64t), S(0,1))
@@ -203,7 +203,7 @@ AO(xxx156,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx157,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx158,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx159,   T(vxxt,vxxt,vxxt), S(0,0))
-	
+
 /* Register write popping */
 AO(regp0,    T(v64t,vxxt,vxxt), S(1,0))
 AO(regp1,    T(v64t,vxxt,vxxt), S(1,0))
@@ -213,7 +213,7 @@ AO(xxx164,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx165,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx166,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx167,   T(vxxt,vxxt,vxxt), S(0,0))
-	
+
 /* Register write non-popping */
 AO(regw0,    T(v64t,vxxt,v64t), S(1,1))
 AO(regw1,    T(v64t,vxxt,v64t), S(1,1))

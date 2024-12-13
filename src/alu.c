@@ -183,7 +183,7 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOiudiv64:   S(ri64) = (i64)((u64)V(a0i64) / (u64)V(a1i64)); break;
 	case AOiurem64:   S(ri64) = (i64)((u64)V(a0i64) % (u64)V(a1i64)); break;
 	case AOimul64:    S(ri64) = V(a0i64) * V(a1i64); break;
-	
+
 /* Integer add with remote ALU tos */
 	case AOiadd32r0:
 	case AOiadd32r1:
@@ -215,7 +215,7 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOfdiv64:    S(rf64) = V(a0f64) + V(a1f64); break;
 	case AOfrem64:    S(rf64) = V(a0f64) + V(a1f64); break;
 	case AOfmul64:    S(rf64) = V(a0f64) + V(a1f64); break;
-	
+
 /* Shift Binary */
 
 	case AOisar32:    S(ri32) = (V(a0i32) >> (u32)V(a1i32)); break;
@@ -246,7 +246,7 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOineg64:    S(ri64) = -V(a0i64); break;
 	case AOfneg32:    S(rf32) = -V(a0f32); break;
 	case AOfneg64:    S(rf64) = -V(a0f64); break;
-	
+
 /* Comparisons */
 
 	case AOiceq32:    S(ri64) = (i64)(V(a0i32) == V(a1i32)); break;
@@ -338,36 +338,36 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOfext32:    S(rf64) = (f64)V(a0f32); break;
 	case AOftrunc64:  S(rf32) = (f32)V(a0f64); break;
 
-	case AOf32toi32:  S(ri32) = (i32)V(a0f32); break;  
-	case AOf32tou32:  S(ri32) = (i32)(u32)V(a0f32); break;  
-	case AOf32toi64:  S(ri64) = (i64)V(a0f32); break;  
-	case AOf32tou64:  S(ri64) = (i64)(u64)V(a0f32); break;  
-	case AOf64toi32:  S(ri32) = (i32)V(a0f64); break;  
-	case AOf64tou32:  S(ri32) = (i32)(u32)V(a0f64); break;  
-	case AOf64toi64:  S(ri64) = (i64)V(a0f64); break;  
-	case AOf64tou64:  S(ri64) = (i64)(u64)V(a0f64); break;  
+	case AOf32toi32:  S(ri32) = (i32)V(a0f32); break;
+	case AOf32tou32:  S(ri32) = (i32)(u32)V(a0f32); break;
+	case AOf32toi64:  S(ri64) = (i64)V(a0f32); break;
+	case AOf32tou64:  S(ri64) = (i64)(u64)V(a0f32); break;
+	case AOf64toi32:  S(ri32) = (i32)V(a0f64); break;
+	case AOf64tou32:  S(ri32) = (i32)(u32)V(a0f64); break;
+	case AOf64toi64:  S(ri64) = (i64)V(a0f64); break;
+	case AOf64tou64:  S(ri64) = (i64)(u64)V(a0f64); break;
 
-	case AOi32tof32:  S(rf32) = (f32)V(a0i32); break;  
-	case AOu32tof32:  S(rf32) = (f32)(u32)V(a0i32); break;  
-	case AOi64tof32:  S(rf32) = (f32)V(a0i64); break;  
-	case AOu64tof32:  S(rf32) = (f32)(u64)V(a0i64); break;  
-	case AOi32tof64:  S(rf64) = (f64)V(a0i32); break;  
-	case AOu32tof64:  S(rf64) = (f64)(u32)V(a0i32); break;  
-	case AOi64tof64:  S(rf64) = (f64)V(a0i64); break;  
-	case AOu64tof64:  S(rf64) = (f64)(u64)V(a0i64); break;  
+	case AOi32tof32:  S(rf32) = (f32)V(a0i32); break;
+	case AOu32tof32:  S(rf32) = (f32)(u32)V(a0i32); break;
+	case AOi64tof32:  S(rf32) = (f32)V(a0i64); break;
+	case AOu64tof32:  S(rf32) = (f32)(u64)V(a0i64); break;
+	case AOi32tof64:  S(rf64) = (f64)V(a0i32); break;
+	case AOu32tof64:  S(rf64) = (f64)(u32)V(a0i32); break;
+	case AOi64tof64:  S(rf64) = (f64)V(a0i64); break;
+	case AOu64tof64:  S(rf64) = (f64)(u64)V(a0i64); break;
 
 /* Stack read */
 	case AOstk0:      S(r) = stkr(alu, 0); break;
 	case AOstk1:      S(r) = stkr(alu, 1); break;
 	case AOstk2:      S(r) = stkr(alu, 2); break;
 	case AOstk3:      S(r) = stkr(alu, 3); break;
-	
+
 /* Register read */
 	case AOreg0:      S(r) = regr(alu, 0); break;
 	case AOreg1:      S(r) = regr(alu, 1); break;
 	case AOreg2:      S(r) = regr(alu, 2); break;
 	case AOreg3:      S(r) = regr(alu, 3); break;
-	
+
 /* Register write popping */
 	case AOregp0:     regw(alu, 0, V(a0)); break;
 	case AOregp1:     regw(alu, 1, V(a0)); break;
@@ -379,7 +379,7 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOregw1:     regw(alu, 1, V(a0)); S(r) = a0; break;
 	case AOregw2:     regw(alu, 2, V(a0)); S(r) = a0; break;
 	case AOregw3:     regw(alu, 3, V(a0)); S(r) = a0; break;
-		
+
 /* Remote alu TOS access */
 	case AOalur0:
 	case AOalur1:
@@ -416,10 +416,10 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOlit2:
 	case AOlit3:      S(ri64) = (i64)(o-AOlit0); break;
 
-	case AOlitm1:		
-	case AOlitm2:		
-	case AOlitm3:		
-	case AOlitm4:     S(ri64) = -(i64)(o-AOlitm1+1); break;		
+	case AOlitm1:
+	case AOlitm2:
+	case AOlitm3:
+	case AOlitm4:     S(ri64) = -(i64)(o-AOlitm1+1); break;
 
 /* Icache constants */
 	case AOi8con0:
@@ -453,7 +453,7 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 		S(ri64) = (i64)ctlicu64(&mam->ctl, (u8)((o-AOi64con0)*8));
 		break;
 	}
-		
+
 /* Reserved opcodes */
 	default:
 		alu->err = AluInvOp;
