@@ -89,25 +89,6 @@ union CLine {
 	u64 u64[8];
 };
 
-typedef struct Ctl Ctl;
-struct Ctl {
-	v64 ip, ip1, il, sp, bp;
-	CLine ic;  /* active i-cache line */
-	CLine ic0; /* next i-cache line linearly */
-	CLine ic1; /* jump target i-cache line */
-};	
-
-typedef struct Mam Mam;
-struct Mam {
-	v64 clk;
-	Alu alu[4];
-	Ctl ctl;
-	v64 alutos[4];
-	v64 memv[2][2];
-	bool trap;
-	int dbg;
-};
-
 static const u8 BA0 = 1, BA1 = 2, BA2 = 3, BA3 = 4;
 static const u8 BM0 = 5, BM1 = 6;
 static const u8 BC = 7;
@@ -128,6 +109,28 @@ struct Ins {
 	u8 op[8];
 };
 
+#define I(ao0, ao1, ao2, ao3) bundle2ins(B(ao0, ao1, ao2, ao3))
+
+typedef struct Ctl Ctl;
+struct Ctl {
+	v64 ip, ip1, il, sp, bp;
+	Bundle ib;
+	CLine ic;  /* active i-cache line */
+	CLine ic0; /* next i-cache line linearly */
+	CLine ic1; /* jump target i-cache line */
+};	
+
+typedef struct Mam Mam;
+struct Mam {
+	v64 clk;
+	Alu alu[4];
+	Ctl ctl;
+	v64 alutos[4];
+	v64 memv[2][2];
+	bool trap;
+	int dbg;
+};
+
 /* util.c */
 extern char* UNITS[];
 extern char* TYPES[];
@@ -138,7 +141,9 @@ void wricu32(CLine *ic, u8 noff, u32 v32);
 void wricu64(CLine *ic, u8 noff, u64 v64);
 Bundle mkbundle(AO ao0, AO ao1, AO ao2, AO ao3, u8 mo0, u8 mo1, u8 co0);
 Bundle ins2bundle(Ins i, u8 *plen);
-Ins bundle2ins(Bundle b, u8 *plen);
+Ins bundle2ins(Bundle b);
+void mamexeb(Mam *mam, Bundle b);
+void mamexei(Mam *mam, Ins i);
 
 /* aoptab.c */
 extern AOp aoptab[NAOp];
@@ -149,7 +154,7 @@ void aluexe1(Mam *mam, Alu *alu, AO o);
 v64 alutos(Alu *alu);
 
 /* mam.c */
-void mamtick(Mam *mam, Bundle b);
+void mamtick(Mam *mam);
 v64 mamalutos(Mam *mam, u8 n);
 v64 mammemv(Mam *mam, u8 n, u8 m);
 

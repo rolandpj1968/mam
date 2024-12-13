@@ -5,13 +5,13 @@ static void add0to7slow(Mam *mam) {
 	wricu8(&mam->ctl.ic, 1, (u8)5);
 	wricu8(&mam->ctl.ic, 2, (u8)6);
 	wricu8(&mam->ctl.ic, 3, (u8)7);
-	mamtick(mam, B(AOlit0,   AOlit2,   AOi8con0, AOi8con2));
-	mamtick(mam, B(AOlit1,   AOlit3,   AOi8con1, AOi8con3));
-	mamtick(mam, B(AOiadd32, AOiadd32, AOiadd32, AOiadd32));
-	mamtick(mam, B(AOalur1,  AOnop,    AOalur3,  AOnop));
-	mamtick(mam, B(AOiadd32, AOnop,    AOiadd32, AOnop));
-	mamtick(mam, B(AOalur2,  AOnop,    AOnop,    AOnop));
-	mamtick(mam, B(AOiadd32, AOnop,    AOnop,    AOnop));
+	mamexei(mam, I(AOlit0,   AOlit2,   AOi8con0, AOi8con2));
+	mamexei(mam, I(AOlit1,   AOlit3,   AOi8con1, AOi8con3));
+	mamexei(mam, I(AOiadd32, AOiadd32, AOiadd32, AOiadd32));
+	mamexei(mam, I(AOalur1,  AOnop,    AOalur3,  AOnop));
+	mamexei(mam, I(AOiadd32, AOnop,    AOiadd32, AOnop));
+	mamexei(mam, I(AOalur2,  AOnop,    AOnop,    AOnop));
+	mamexei(mam, I(AOiadd32, AOnop,    AOnop,    AOnop));
 
 	printf("\n\nsum{0..7} = %lu\n\n", mamalutos(mam, 0));
 }
@@ -21,11 +21,11 @@ static void add0to7fast(Mam *mam) {
 	wricu8(&mam->ctl.ic, 1, (u8)5);
 	wricu8(&mam->ctl.ic, 2, (u8)6);
 	wricu8(&mam->ctl.ic, 3, (u8)7);
-	mamtick(mam, B(AOlit0,     AOlit2,   AOi8con0,   AOi8con2));
-	mamtick(mam, B(AOlit1,     AOlit3,   AOi8con1,   AOi8con3));
-	mamtick(mam, B(AOiadd32,   AOiadd32, AOiadd32,   AOiadd32));
-	mamtick(mam, B(AOiadd32r1, AOnop,    AOiadd32r3, AOnop));
-	mamtick(mam, B(AOiadd32r2, AOnop,    AOnop,      AOnop));
+	mamexei(mam, I(AOlit0,     AOlit2,   AOi8con0,   AOi8con2));
+	mamexei(mam, I(AOlit1,     AOlit3,   AOi8con1,   AOi8con3));
+	mamexei(mam, I(AOiadd32,   AOiadd32, AOiadd32,   AOiadd32));
+	mamexei(mam, I(AOiadd32r1, AOnop,    AOiadd32r3, AOnop));
+	mamexei(mam, I(AOiadd32r2, AOnop,    AOnop,      AOnop));
 
 	printf("\n\nsum{0..7} = %lu\n\n", mamalutos(mam, 0));
 }
@@ -35,13 +35,13 @@ static void addm1tom8slow(Mam *mam) {
 	wricu8(&mam->ctl.ic, 2, (u8)-6);
 	wricu8(&mam->ctl.ic, 3, (u8)-7);
 	wricu8(&mam->ctl.ic, 0, (u8)-8);
-	mamtick(mam, B(AOlitm1,  AOlitm3,  AOi8con0, AOi8con2));
-	mamtick(mam, B(AOlitm2,  AOlitm4,  AOi8con1, AOi8con3));
-	mamtick(mam, B(AOiadd32, AOiadd32, AOiadd32, AOiadd32));
-	mamtick(mam, B(AOalur1,  AOnop,    AOalur3,  AOnop));
-	mamtick(mam, B(AOiadd32, AOnop,    AOiadd32, AOnop));
-	mamtick(mam, B(AOalur2,  AOnop,    AOnop,    AOnop));
-	mamtick(mam, B(AOiadd32, AOnop,    AOnop,    AOnop));
+	mamexei(mam, I(AOlitm1,  AOlitm3,  AOi8con0, AOi8con2));
+	mamexei(mam, I(AOlitm2,  AOlitm4,  AOi8con1, AOi8con3));
+	mamexei(mam, I(AOiadd32, AOiadd32, AOiadd32, AOiadd32));
+	mamexei(mam, I(AOalur1,  AOnop,    AOalur3,  AOnop));
+	mamexei(mam, I(AOiadd32, AOnop,    AOiadd32, AOnop));
+	mamexei(mam, I(AOalur2,  AOnop,    AOnop,    AOnop));
+	mamexei(mam, I(AOiadd32, AOnop,    AOnop,    AOnop));
 
 	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
 }
@@ -51,11 +51,11 @@ static void addm1tom8fast(Mam *mam) {
 	wricu8(&mam->ctl.ic, 2, (u8)-6);
 	wricu8(&mam->ctl.ic, 3, (u8)-7);
 	wricu8(&mam->ctl.ic, 0, (u8)-8);
-	mamtick(mam, B(AOlitm1,    AOlitm3,  AOi8con0,   AOi8con2));
-	mamtick(mam, B(AOlitm2,    AOlitm4,  AOi8con1,   AOi8con3));
-	mamtick(mam, B(AOiadd32,   AOiadd32, AOiadd32,   AOiadd32));
-	mamtick(mam, B(AOiadd32r1, AOnop,    AOiadd32r3, AOnop));
-	mamtick(mam, B(AOiadd32r2, AOnop,    AOnop,      AOnop));
+	mamexei(mam, I(AOlitm1,    AOlitm3,  AOi8con0,   AOi8con2));
+	mamexei(mam, I(AOlitm2,    AOlitm4,  AOi8con1,   AOi8con3));
+	mamexei(mam, I(AOiadd32,   AOiadd32, AOiadd32,   AOiadd32));
+	mamexei(mam, I(AOiadd32r1, AOnop,    AOiadd32r3, AOnop));
+	mamexei(mam, I(AOiadd32r2, AOnop,    AOnop,      AOnop));
 
 	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
 }
@@ -65,11 +65,11 @@ static void addm1tom8fast16(Mam *mam) {
 	wricu16(&mam->ctl.ic, 4, (u16)-6);
 	wricu16(&mam->ctl.ic, 6, (u16)-7);
 	wricu16(&mam->ctl.ic, 0, (u16)-8);
-	mamtick(mam, B(AOlitm1,    AOlitm3,  AOi16con0,   AOi16con2));
-	mamtick(mam, B(AOlitm2,    AOlitm4,  AOi16con1,   AOi16con3));
-	mamtick(mam, B(AOiadd32,   AOiadd32, AOiadd32,   AOiadd32));
-	mamtick(mam, B(AOiadd32r1, AOnop,    AOiadd32r3, AOnop));
-	mamtick(mam, B(AOiadd32r2, AOnop,    AOnop,      AOnop));
+	mamexei(mam, I(AOlitm1,    AOlitm3,  AOi16con0,   AOi16con2));
+	mamexei(mam, I(AOlitm2,    AOlitm4,  AOi16con1,   AOi16con3));
+	mamexei(mam, I(AOiadd32,   AOiadd32, AOiadd32,   AOiadd32));
+	mamexei(mam, I(AOiadd32r1, AOnop,    AOiadd32r3, AOnop));
+	mamexei(mam, I(AOiadd32r2, AOnop,    AOnop,      AOnop));
 
 	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
 }
@@ -83,7 +83,7 @@ static void checkmam(Mam *mam) {
 		assert((aoptab[op].tr == vxxt) == (aoptab[op].nr == 0));
 		assert(aoptab[op].na <= 2);
 		assert(aoptab[op].nr <= 1);
-		mamtick(mam, B(op, op, op, op));
+		mamexei(mam, I(op, op, op, op));
 		if (!mam->trap) {
 			printf("    clk %3lu: %4d 0x%02x %3s %10s    (%s) <- (%s, %s)\n", mam->clk, op, op, UNITS[aoptab[op].o.unit], aoptab[op].o.name, TYPES[aoptab[op].tr], TYPES[aoptab[op].ta0], TYPES[aoptab[op].ta1]);
 			op++;

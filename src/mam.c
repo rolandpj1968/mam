@@ -8,8 +8,8 @@ static void mamtrap(Mam *mam, u8 n) {
 
 static const u8 AOPIDX[4] = {1, 2, 3, 4};
 
-/* For now... eventually we read code from "memory" */
-void mamtick(Mam *mam, Bundle b) {
+void mamtick(Mam *mam) {
+	Bundle b = mam->ctl.ib;
 	mam->clk++;
 	mam->trap = 0;
 	for (u8 n = 0; n < 4; n++) {

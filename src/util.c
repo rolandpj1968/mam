@@ -54,7 +54,7 @@ Bundle ins2bundle(Ins i, u8 *plen) {
 	return b;
 }
 
-Ins bundle2ins(Bundle b, u8 *plen) {
+Ins bundle2ins(Bundle b) {
 	Ins i = {0};
 	u8 flags = 0;
 	u8 off = 1;
@@ -65,7 +65,16 @@ Ins bundle2ins(Bundle b, u8 *plen) {
 		}
 	}
 	i.op[IF] = flags;
-	*plen = off;
 	return i;
 }
 
+void mamexeb(Mam *mam, Bundle b) {
+	mam->ctl.ib = b;
+	mamtick(mam);
+}
+
+void mamexei(Mam *mam, Ins i) {
+	u8 x;
+	mam->ctl.ib = ins2bundle(i, &x);
+	mamtick(mam);
+}
