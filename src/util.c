@@ -8,6 +8,8 @@ char* ALUERRS[] = {"none", "badi", "div0", "impl"};
 
 char* CTLERRS[] = {"none", "iper", "iovr", "halt"};
 
+char* ENCERRS[] = {"none", "covr", "iovr", "icov"};
+
 u8 u8dummy;
 
 void wricu8(CLine *ic, u8 noff, u8 v8) {
@@ -155,4 +157,41 @@ EncErr encode(EncIns ei, CLine *ic, bool bc[4][4], u8* poff) {
 	}
 	*poff += len;
 	return EncNoErr;
+}
+
+EncErr encodeic(EncIns ei[], u8 nei, CLine *ic) {
+	u8 off = 0;
+	bool bc[4][4] = {0};
+	*ic = (CLine){0};
+	for (u8 n = 0; n < nei; n++) {
+		EncErr err = encode(ei[n], ic, bc, &off);
+		if (err != EncNoErr) {
+			return err;
+		}
+	}
+	return EncNoErr;
+}
+
+void dumpei(EncIns ei) {
+	printf("[%8s, %8s, %8s, %8s] - ", aoptab[ei.b.op[BA0]].o.name, aoptab[ei.b.op[BA1]].o.name, aoptab[ei.b.op[BA2]].o.name, aoptab[ei.b.op[BA3]].o.name);
+	for (u8 n = 0; n < 4; n++) {
+		printf(" %s [", (char *[4]){"u8", "u16", "u32", "u64"}[n]);
+		for (u8 m = 0; m < 4; m++) {
+			if (ei.bc[n][m]) {
+				printf((char *[4]){"0x%02lx", "0x%04lx", "0x%08lx", "0x%016lx"}[n], ei.c[n][m]);
+			} else {
+				printf("-");
+			}
+			printf("%s", (m<3 ? "," : ""));
+		}
+		printf("]%s", (n < 3 ? "," : ""));
+	}
+	printf("]\n");
+}
+
+void dumpeis(EncIns ei[], u8 nei) {
+	for (u8 i = 0; i < nei; i++) {
+		printf("ins %3u: ", i);
+		dumpei(ei[i]);
+	}
 }

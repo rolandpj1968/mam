@@ -10,22 +10,7 @@ static void encadd0to7slow(CLine *ic) {
 		{B(AOalur2,  AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
 		{B(AOiadd32, AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
 	};
-	for (u8 i = 0; i < 7; i++) {
-		printf("\nins 0: [%8s, %8s, %8s, %8s] - ", aoptab[pgm[i].b.op[BA0]].o.name, aoptab[pgm[i].b.op[BA1]].o.name, aoptab[pgm[i].b.op[BA2]].o.name, aoptab[pgm[i].b.op[BA3]].o.name);
-		for (u8 n = 0; n < 4; n++) {
-			printf(" %s [", (char *[4]){"u8", "u16", "u32", "u64"}[n]);
-			for (u8 m = 0; m < 4; m++) {
-				if (pgm[i].bc[n][m]) {
-					printf((char *[4]){"0x%02lx", "0x%04lx", "0x%08lx", "0x%016lx"}[n], pgm[i].c[n][m]);
-				} else {
-					printf("-");
-				}
-				printf("%s", (m<3 ? "," : ""));
-			}
-			printf("]%s", (n < 3 ? "," : ""));
-		}
-		printf("]%s\n", (i<6 ? "," : ""));
-	}
+	dumpeis(pgm, 7);
 	printf("\n");
 }
 

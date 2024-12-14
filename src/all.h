@@ -183,6 +183,7 @@ extern char* UNITS[];
 extern char* TYPES[];
 extern char* ALUERRS[];
 extern char* CTLERRS[];
+extern char* ENCERRS[];
 void wricu8(CLine *ic, u8 noff, u8 v8);
 void wricu16(CLine *ic, u8 noff, u16 v16);
 void wricu32(CLine *ic, u8 noff, u32 v32);
@@ -193,6 +194,9 @@ Ins bundle2ins(Bundle b, u8 *plen);
 void mamexeb(Mam *mam, Bundle b);
 void mamexei(Mam *mam, Ins i);
 EncErr encode(EncIns ei, CLine *ic, bool bc[4][4], u8* poff);
+EncErr encodeic(EncIns ei[], u8 nei, CLine *ic);
+void dumpei(EncIns ei);
+void dumpeis(EncIns ei[], u8 nei);
 
 /* optab.c */
 extern AOp aoptab[NAOp];
