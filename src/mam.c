@@ -9,7 +9,6 @@ static void mamalutrap(Mam *mam, u8 n) {
 static const u8 AOPIDX[4] = {1, 2, 3, 4};
 
 void mamtick(Mam *mam) {
-	Bundle b = mam->ctl.ib;
 	mam->clk++;
 	mam->trap = 0;
 	for (u8 n = 0; n < 4; n++) {
@@ -34,6 +33,7 @@ void mamtick(Mam *mam) {
 		dumpb(mam->ctl.ib);
 		printf("\n");
 	}
+	Bundle b = mam->ctl.ib;
 	for (u8 n = 0; n < 4; n++) {
 		aluexe0(mam, &mam->alu[n], b.op[AOPIDX[n]]);
 	}
