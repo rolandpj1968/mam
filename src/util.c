@@ -172,8 +172,13 @@ EncErr enceis(EncIns ei[], u8 nei, CLine *ic) {
 	return EncNoErr;
 }
 
+void dumpb(Bundle b) {
+	printf("[[%8s, %8s, %8s, %8s] [%8s]] - ", aoptab[b.op[BA0]].o.name, aoptab[b.op[BA1]].o.name, aoptab[b.op[BA2]].o.name, aoptab[b.op[BA3]].o.name, coptab[b.op[BC]].o.name);
+}
+
 void dumpei(EncIns ei) {
-	printf("[%8s, %8s, %8s, %8s] - ", aoptab[ei.b.op[BA0]].o.name, aoptab[ei.b.op[BA1]].o.name, aoptab[ei.b.op[BA2]].o.name, aoptab[ei.b.op[BA3]].o.name);
+	dumpb(ei.b);
+	printf(" - ");
 	for (u8 n = 0; n < 4; n++) {
 		printf(" %s [", (char *[4]){"u8", "u16", "u32", "u64"}[n]);
 		for (u8 m = 0; m < 4; m++) {

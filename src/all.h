@@ -195,6 +195,7 @@ void mamexeb(Mam *mam, Bundle b);
 void mamexei(Mam *mam, Ins i);
 EncErr encei(EncIns ei, CLine *ic, bool bc[4][4], u8* poff);
 EncErr enceis(EncIns ei[], u8 nei, CLine *ic);
+void dumpb(Bundle b);
 void dumpei(EncIns ei);
 void dumpeis(EncIns ei[], u8 nei);
 

@@ -18,6 +18,23 @@ static void encadd0to7slow(CLine *ic) {
 	}
 }
 
+static void runadd0to7slow() {
+	Mam mam = {0};
+	CLine ic;
+	Dram dram = {.wr = 0, .addr = 0, .len = 64, .m = &ic};
+	Dram *pdram[1] = {&dram};
+
+	mam.ndram = 1;
+	mam.dram = pdram;
+
+	encadd0to7slow(&ic);
+
+	mam.dbg = 1;
+	mam.ctl.ip = 0;
+	mamtick(&mam);
+}
+
+
 static void add0to7slow(Mam *mam) {
 	wricu8(&mam->ctl.ic, 0, (u8)4);
 	wricu8(&mam->ctl.ic, 1, (u8)5);
@@ -122,6 +139,7 @@ int main() {
 	/* addm1tom8slow(&mam); */
 	/* addm1tom8fast(&mam); */
 	/* addm1tom8fast16(&mam); */
-	encadd0to7slow(&(CLine){0});
+	//encadd0to7slow(&(CLine){0});
+	runadd0to7slow();
 	printf("\n#ALU ops is %d\n\n", NAOp);
 }

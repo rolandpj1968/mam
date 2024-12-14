@@ -29,6 +29,11 @@ void mamtick(Mam *mam) {
 		printf("\nclk %12lu CTL raised %s... bailing...\n\n", mam->clk, CTLERRS[mam->ctl.err]);
 		exit(1);
 	}
+	if (mam->dbg >= 1) {
+		printf("DBG: clk %10lu - ", mam->clk);
+		dumpb(mam->ctl.ib);
+		printf("\n");
+	}
 	for (u8 n = 0; n < 4; n++) {
 		aluexe0(mam, &mam->alu[n], b.op[AOPIDX[n]]);
 	}
