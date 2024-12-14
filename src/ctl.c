@@ -31,6 +31,7 @@ void ctlexe0(Mam *mam, Ctl *ctl) {
 	Ins i = {0};
 	u64 off = ctl->ip & 63;
 	u8 ilen;
+	ctl->ilen = 0;
 	l = findcline(mam->ndram, mam->dram, ctl->ip);
 	if (l == 0) {
 		ctl->err = CtlBadIp;
@@ -45,9 +46,7 @@ void ctlexe0(Mam *mam, Ctl *ctl) {
 		ctl->err = CtlInsOvr;
 		return;
 	}
+	ctl->ilen = ilen;
 }
 
-
-/* Dram *dram = finddram(mam->ndram, mam->dram, ctl->ip); */
-/* } */
 
