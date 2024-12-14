@@ -113,7 +113,7 @@ static u8 maxconoff(bool bcons[4][4], bool pbcons[4][4]) {
 	return maxoff;
 }
 
-EncErr encode(EncIns ei, CLine *ic, bool bc[4][4], u8* poff) {
+EncErr encei(EncIns ei, CLine *ic, bool bc[4][4], u8* poff) {
 	Ins i;
 	u8 off = *poff;
 	u8 conoff;
@@ -159,12 +159,12 @@ EncErr encode(EncIns ei, CLine *ic, bool bc[4][4], u8* poff) {
 	return EncNoErr;
 }
 
-EncErr encodeic(EncIns ei[], u8 nei, CLine *ic) {
+EncErr enceis(EncIns ei[], u8 nei, CLine *ic) {
 	u8 off = 0;
 	bool bc[4][4] = {0};
 	*ic = (CLine){0};
 	for (u8 n = 0; n < nei; n++) {
-		EncErr err = encode(ei[n], ic, bc, &off);
+		EncErr err = encei(ei[n], ic, bc, &off);
 		if (err != EncNoErr) {
 			return err;
 		}

@@ -193,8 +193,8 @@ Bundle ins2bundle(Ins i, u8 *plen);
 Ins bundle2ins(Bundle b, u8 *plen);
 void mamexeb(Mam *mam, Bundle b);
 void mamexei(Mam *mam, Ins i);
-EncErr encode(EncIns ei, CLine *ic, bool bc[4][4], u8* poff);
-EncErr encodeic(EncIns ei[], u8 nei, CLine *ic);
+EncErr encei(EncIns ei, CLine *ic, bool bc[4][4], u8* poff);
+EncErr enceis(EncIns ei[], u8 nei, CLine *ic);
 void dumpei(EncIns ei);
 void dumpeis(EncIns ei[], u8 nei);
 

@@ -1,7 +1,7 @@
 #include "all.h"
 
 static void encadd0to7slow(CLine *ic) {
-	EncIns pgm[7] = {
+	EncIns ei[7] = {
 		{B(AOlit0,   AOlit2,   AOi8con0, AOi8con2), {{1,0,1,0}}, {{4,0,6,0}}},
 		{B(AOlit1,   AOlit3,   AOi8con1, AOi8con3), {{0,1,0,1}}, {{0,5,0,7}}},
 		{B(AOiadd32, AOiadd32, AOiadd32, AOiadd32), {{0}}, {{0}}},
@@ -10,8 +10,12 @@ static void encadd0to7slow(CLine *ic) {
 		{B(AOalur2,  AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
 		{B(AOiadd32, AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
 	};
-	dumpeis(pgm, 7);
+	dumpeis(ei, 7);
 	printf("\n");
+	EncErr err = enceis(ei, 7, ic);
+	if (err != EncNoErr) {
+		printf("Encoding failed with %s\n\n", ENCERRS[err]);
+	}
 }
 
 static void add0to7slow(Mam *mam) {
@@ -118,6 +122,6 @@ int main() {
 	/* addm1tom8slow(&mam); */
 	/* addm1tom8fast(&mam); */
 	/* addm1tom8fast16(&mam); */
-	encadd0to7slow(0);
+	encadd0to7slow(&(CLine){0});
 	printf("\n#ALU ops is %d\n\n", NAOp);
 }
