@@ -24,3 +24,30 @@ u64 ctlicu64(Ctl *ctl, u8 noff) {
 	assert((noff&7) == 0);
 	return ctl->ic.u64[(64-8-noff)/8];
 }
+
+/* fetch and decode for now - will be pipelined... */
+void ctlexe0(Mam *mam, Ctl *ctl) {
+	CLine *l;
+	Ins i = {0};
+	u64 off = ctl->ip & 63;
+	u8 ilen;
+	l = findcline(mam->ndram, mam->dram, ctl->ip);
+	if (l == 0) {
+		ctl->err = CtlBadIp;
+		return;
+	}
+	ctl->ic = *l;
+	for (u8 n = 0; n < 8 && off+n < 64; n++) {
+		i.op[n] = ctl->ic.u8[off+n];
+	}
+	ctl->ib = ins2bundle(i, &ilen);
+	if (64 < off+ilen) {
+		ctl->err = CtlInsOvr;
+		return;
+	}
+}
+
+
+/* Dram *dram = finddram(mam->ndram, mam->dram, ctl->ip); */
+/* } */
+

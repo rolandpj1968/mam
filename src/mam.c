@@ -1,6 +1,6 @@
 #include "all.h"
 
-static void mamtrap(Mam *mam, u8 n) {
+static void mamalutrap(Mam *mam, u8 n) {
 	/* For now... */
 	printf("\nclk %12lu ALU %u raised %s... resetting...\n\n", mam->clk, n, ALUERRS[mam->alu[n].err]);
 	mam->alu[n].err = AluNoErr;
@@ -15,12 +15,19 @@ void mamtick(Mam *mam) {
 	for (u8 n = 0; n < 4; n++) {
 		if (mam->alu[n].err != AluNoErr) {
 			mam->trap = 1;
-			mamtrap(mam, n);
+			mamalutrap(mam, n);
 			if (mam->dbg >= 1) {
 				printf("DBG: clk %10lu trap cycle ALU %u\n", mam->clk, n);
 			}
 			return;
 		}
+	}
+	assert(mam->ctl.err == CtlNoErr);
+	ctlexe0(mam, &mam->ctl);
+	if (mam->ctl.err != CtlNoErr) {
+		/* for now - should raise a trap */
+		printf("\nclk %12lu CTL raised %s... bailing...\n\n", mam->clk, CTLERRS[mam->ctl.err]);
+		exit(1);
 	}
 	for (u8 n = 0; n < 4; n++) {
 		aluexe0(mam, &mam->alu[n], b.op[AOPIDX[n]]);

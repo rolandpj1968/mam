@@ -63,7 +63,7 @@ struct AOp {
 typedef enum AluErr AluErr;
 enum AluErr {
 	AluNoErr,
-	AluInvOp,
+	AluBadOp,
 	AluIDiv0,
 	AluNoImpl,
 };
@@ -109,7 +109,8 @@ struct Ins {
 	u8 op[8];
 };
 
-#define I(ao0, ao1, ao2, ao3) bundle2ins(B(ao0, ao1, ao2, ao3))
+extern u8 u8dummy;
+#define I(ao0, ao1, ao2, ao3) bundle2ins(B(ao0, ao1, ao2, ao3), &u8dummy)
 
 typedef enum CO CO;
 enum CO {
@@ -127,16 +128,16 @@ struct COp {
 typedef enum CtlErr CtlErr;
 enum CtlErr {
 	CtlNoErr,
-	AluHlt,
+	CtlBadIp,  /* Ip is not a memory address */
+	CtlInsOvr, /* instruction overruns cache line */
+	CtlHlt,
 };
 
 typedef struct Ctl Ctl;
 struct Ctl {
 	v64 ip, jp, il, sp, bp;
-	Bundle ib;
-	CLine ic;  /* active i-cache line */
-	CLine ic0; /* next i-cache line linearly */
-	CLine jc;  /* jump target i-cache line */
+	Bundle ib; /* decoded instruction */
+	CLine ic; /* active i-cache line */
 	u8 err;
 };
 
@@ -162,19 +163,29 @@ struct Mam {
 	int dbg;
 };
 
+typedef enum EncErr EncErr;
+enum EncErr {
+	EncNoErr,
+	EncConOvr,
+	EncInsOvr,
+	EncInsConOvr,
+};
+
 /* util.c */
 extern char* UNITS[];
 extern char* TYPES[];
 extern char* ALUERRS[];
+extern char* CTLERRS[];
 void wricu8(CLine *ic, u8 noff, u8 v8);
 void wricu16(CLine *ic, u8 noff, u16 v16);
 void wricu32(CLine *ic, u8 noff, u32 v32);
 void wricu64(CLine *ic, u8 noff, u64 v64);
-Bundle mkbundle(AO ao0, AO ao1, AO ao2, AO ao3, u8 mo0, u8 mo1, u8 co0);
+Bundle mkbundle(AO ao0, AO ao1, AO ao2, AO ao3, u8 mo0, u8 mo1, CO co0);
 Bundle ins2bundle(Ins i, u8 *plen);
-Ins bundle2ins(Bundle b);
+Ins bundle2ins(Bundle b, u8 *plen);
 void mamexeb(Mam *mam, Bundle b);
 void mamexei(Mam *mam, Ins i);
+EncErr encode(Bundle b, bool bcons[4][4], u64 cons[4][4], CLine *ic, bool pbcons[4][4], u8* poff);
 
 /* optab.c */
 extern AOp aoptab[NAOp];
@@ -184,6 +195,10 @@ extern COp coptab[NCOp];
 void aluexe0(Mam *mam, Alu *alu, AO o);
 void aluexe1(Mam *mam, Alu *alu, AO o);
 v64 alutos(Alu *alu);
+
+/* dram.c */
+Dram *finddram(u8 ndram, Dram **dram, v64 addr);
+CLine *findcline(u8 ndram, Dram **dram, v64 addr);
 
 /* mam.c */
 void mamtick(Mam *mam);
@@ -198,3 +213,4 @@ u8 ctlicu8(Ctl* ctl, u8 noff);
 u16 ctlicu16(Ctl* ctl, u8 noff);
 u32 ctlicu32(Ctl* ctl, u8 noff);
 u64 ctlicu64(Ctl* ctl, u8 noff);
+void ctlexe0(Mam *mam, Ctl *ctl);

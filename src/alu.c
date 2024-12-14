@@ -456,7 +456,7 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 
 /* Reserved opcodes */
 	default:
-		alu->err = AluInvOp;
+		alu->err = AluBadOp;
 		break;
 	}
 

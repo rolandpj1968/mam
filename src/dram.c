@@ -7,3 +7,11 @@ Dram *finddram(u8 ndram, Dram **dram, v64 addr) {
 	}
 	return 0;
 }
+
+CLine *findcline(u8 ndram, Dram **dram, v64 addr) {
+	Dram *m = finddram(ndram, dram, addr);
+	if (m == 0) {
+		return 0;
+	}
+	return &m->m[(addr - m->addr)/64];
+}
