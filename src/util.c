@@ -173,7 +173,7 @@ EncErr enceis(EncIns ei[], u8 nei, CLine *ic) {
 }
 
 void dumpb(Bundle b) {
-	printf("[[%8s, %8s, %8s, %8s] [%8s]] - ", aoptab[b.op[BA0]].o.name, aoptab[b.op[BA1]].o.name, aoptab[b.op[BA2]].o.name, aoptab[b.op[BA3]].o.name, coptab[b.op[BC]].o.name);
+	printf("[[%8s, %8s, %8s, %8s] [%8s]]", aoptab[b.op[BA0]].o.name, aoptab[b.op[BA1]].o.name, aoptab[b.op[BA2]].o.name, aoptab[b.op[BA3]].o.name, coptab[b.op[BC]].o.name);
 }
 
 void dumpei(EncIns ei) {

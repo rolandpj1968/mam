@@ -31,7 +31,9 @@ static void runadd0to7slow() {
 
 	mam.dbg = 1;
 	mam.ctl.ip = 0;
-	mamtick(&mam);
+	for (u8 i = 0; i < 7; i++) {
+		mamtick(&mam);
+	}
 }
 
 

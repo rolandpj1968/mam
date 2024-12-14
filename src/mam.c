@@ -29,7 +29,7 @@ void mamtick(Mam *mam) {
 		exit(1);
 	}
 	if (mam->dbg >= 1) {
-		printf("DBG: clk %10lu - ", mam->clk);
+		printf("DBG: clk %10lu / ip 0x%016lx - ", mam->clk, mam->ctl.ip);
 		dumpb(mam->ctl.ib);
 		printf("\n");
 	}
