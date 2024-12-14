@@ -49,4 +49,12 @@ void ctlexe0(Mam *mam, Ctl *ctl) {
 	ctl->ilen = ilen;
 }
 
-
+void ctlexe1(Mam *mam, Ctl *ctl, CO o) {
+	switch (o) {
+	case COnop: break;
+	case COhlt: ctl->err = CtlHlt; break;
+/* Reserved opcodes */
+	default: ctl->err = CtlBadOp; break;
+	}
+	mam->ctl.ip += mam->ctl.ilen;
+}

@@ -4,9 +4,9 @@ char* UNITS[] = { "Alu", "Mem", "Ctl" };
 
 char* TYPES[] = {"i32", "i64", "f32", "f64", "v64", "---"};
 
-char* ALUERRS[] = {"none", "badi", "div0", "impl"};
+char* ALUERRS[] = {"none", "bdop", "div0", "impl"};
 
-char* CTLERRS[] = {"none", "iper", "iovr", "halt"};
+char* CTLERRS[] = {"none", "bdip", "iovr", "bdop", "halt"};
 
 char* ENCERRS[] = {"none", "covr", "iovr", "icov"};
 

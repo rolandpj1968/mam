@@ -130,7 +130,8 @@ enum CtlErr {
 	CtlNoErr,
 	CtlBadIp,  /* Ip is not a memory address */
 	CtlInsOvr, /* instruction overruns cache line */
-	CtlHlt,
+	CtlBadOp,  /* Reserved op */
+	CtlHlt,    /* COhlt instruction */
 };
 
 typedef struct Ctl Ctl;
@@ -227,3 +228,4 @@ u16 ctlicu16(Ctl* ctl, u8 noff);
 u32 ctlicu32(Ctl* ctl, u8 noff);
 u64 ctlicu64(Ctl* ctl, u8 noff);
 void ctlexe0(Mam *mam, Ctl *ctl);
+void ctlexe1(Mam *mam, Ctl *ctl, CO o);
