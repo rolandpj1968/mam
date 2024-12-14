@@ -163,6 +163,13 @@ struct Mam {
 	int dbg;
 };
 
+typedef struct EncIns EncIns;
+struct EncIns {
+	Bundle b;
+	bool bc[4][4];
+	u64 c[4][4];
+};
+
 typedef enum EncErr EncErr;
 enum EncErr {
 	EncNoErr,
@@ -185,7 +192,7 @@ Bundle ins2bundle(Ins i, u8 *plen);
 Ins bundle2ins(Bundle b, u8 *plen);
 void mamexeb(Mam *mam, Bundle b);
 void mamexei(Mam *mam, Ins i);
-EncErr encode(Bundle b, bool bcons[4][4], u64 cons[4][4], CLine *ic, bool pbcons[4][4], u8* poff);
+EncErr encode(EncIns ei, CLine *ic, bool bc[4][4], u8* poff);
 
 /* optab.c */
 extern AOp aoptab[NAOp];

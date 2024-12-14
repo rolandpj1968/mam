@@ -111,7 +111,7 @@ static u8 maxconoff(bool bcons[4][4], bool pbcons[4][4]) {
 	return maxoff;
 }
 
-EncErr encode(Bundle b, bool bcons[4][4], u64 cons[4][4], CLine *ic, bool pbcons[4][4], u8* poff) {
+EncErr encode(EncIns ei, CLine *ic, bool bc[4][4], u8* poff) {
 	Ins i;
 	u8 off = *poff;
 	u8 conoff;
@@ -119,33 +119,33 @@ EncErr encode(Bundle b, bool bcons[4][4], u64 cons[4][4], CLine *ic, bool pbcons
 
 	for (u8 n = 0; n < 4; n++) {
 		for (u8 m = 0; m < 4; m++) {
-			if (bcons[n][m]) {
+			if (ei.bc[n][m]) {
 				for (u8 i = 0; i < 1<<n; i++) {
-					if (conclash(pbcons, ((m<<n) + i))) {
+					if (conclash(bc, ((m<<n) + i))) {
 						return EncConOvr;
 					}
 				}
 			}
 		}
 	}
-	i = bundle2ins(b, &len);
+	i = bundle2ins(ei.b, &len);
 	if (64 < off+len) {
 		return EncInsOvr;
 	}
-	conoff = maxconoff(bcons, pbcons);
+	conoff = maxconoff(ei.bc, bc);
 	if (64 < off+len + conoff) {
 		return EncInsConOvr;
 	}
 	for (u8 n = 0; n < 4; n++) {
 		for (u8 m = 0; m < 4; m++) {
-			if (bcons[n][m]) {
-				assert(!pbcons[n][m]);
-				pbcons[n][m] = 1;
+			if (ei.bc[n][m]) {
+				assert(!bc[n][m]);
+				bc[n][m] = 1;
 				switch (n) {
-				case 0: wricu8(ic, (m<<n), (u8)cons[n][m]); break;
-				case 1: wricu16(ic, (m<<n), (u16)cons[n][m]); break;
-				case 2: wricu32(ic, (m<<n), (u32)cons[n][m]); break;
-				case 3: wricu64(ic, (m<<n), (u64)cons[n][m]); break;
+				case 0: wricu8(ic, (m<<n), (u8)ei.c[n][m]); break;
+				case 1: wricu16(ic, (m<<n), (u16)ei.c[n][m]); break;
+				case 2: wricu32(ic, (m<<n), (u32)ei.c[n][m]); break;
+				case 3: wricu64(ic, (m<<n), (u64)ei.c[n][m]); break;
 				}
 			}
 		}

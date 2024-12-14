@@ -1,29 +1,32 @@
 #include "all.h"
 
 static void encadd0to7slow(CLine *ic) {
-	struct { Bundle b; bool bc[4][4]; u64 c[4][4]; } pgm[7] = {
+	EncIns pgm[7] = {
 		{B(AOlit0,   AOlit2,   AOi8con0, AOi8con2), {{1,0,1,0}}, {{4,0,6,0}}},
-		{B(AOlit1,   AOlit3,   AOi8con1, AOi8con3), {{0}}, {{0}}},
+		{B(AOlit1,   AOlit3,   AOi8con1, AOi8con3), {{0,1,0,1}}, {{0,5,0,7}}},
 		{B(AOiadd32, AOiadd32, AOiadd32, AOiadd32), {{0}}, {{0}}},
 		{B(AOalur1,  AOnop,    AOalur3,  AOnop),    {{0}}, {{0}}},
 		{B(AOiadd32, AOnop,    AOiadd32, AOnop),    {{0}}, {{0}}},
 		{B(AOalur2,  AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
 		{B(AOiadd32, AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
 	};
-	printf("\nins 0: [%s, %s, %s, %s] - ", aoptab[pgm[0].b.op[BA0]].o.name, aoptab[pgm[0].b.op[BA1]].o.name, aoptab[pgm[0].b.op[BA2]].o.name, aoptab[pgm[0].b.op[BA3]].o.name);
-	for (u8 n = 0; n < 4; n++) {
-		printf(" %s [", (char *[4]){"u8", "u16", "u32", "u64"}[n]);
-		for (u8 m = 0; m < 4; m++) {
-			if (pgm[0].bc[n][m]) {
-				printf((char *[4]){"0x%02lx", "0x%04lx", "0x%08lx", "0x%016lx"}[n], pgm[0].c[n][m]);
-			} else {
-				printf("-");
+	for (u8 i = 0; i < 7; i++) {
+		printf("\nins 0: [%8s, %8s, %8s, %8s] - ", aoptab[pgm[i].b.op[BA0]].o.name, aoptab[pgm[i].b.op[BA1]].o.name, aoptab[pgm[i].b.op[BA2]].o.name, aoptab[pgm[i].b.op[BA3]].o.name);
+		for (u8 n = 0; n < 4; n++) {
+			printf(" %s [", (char *[4]){"u8", "u16", "u32", "u64"}[n]);
+			for (u8 m = 0; m < 4; m++) {
+				if (pgm[i].bc[n][m]) {
+					printf((char *[4]){"0x%02lx", "0x%04lx", "0x%08lx", "0x%016lx"}[n], pgm[i].c[n][m]);
+				} else {
+					printf("-");
+				}
+				printf("%s", (m<3 ? "," : ""));
 			}
-			printf("%s", (m<3 ? "," : ""));
+			printf("]%s", (n < 3 ? "," : ""));
 		}
-		printf("]%s", (n < 3 ? "," : ""));
+		printf("]%s\n", (i<6 ? "," : ""));
 	}
-	printf("]\n\n");
+	printf("\n");
 }
 
 static void add0to7slow(Mam *mam) {
