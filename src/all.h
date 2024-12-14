@@ -136,7 +136,7 @@ enum CtlErr {
 
 typedef struct Ctl Ctl;
 struct Ctl {
-	v64 ip, jp, il, sp, bp;
+	v64 ip, jp, lp, sp, bp;
 	u8 ilen;
 	Bundle ib; /* decoded instruction */
 	CLine ic; /* active i-cache line */

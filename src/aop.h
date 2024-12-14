@@ -1,13 +1,13 @@
 /* alu ops */
 
 AO(nop,      T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx1,     T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx2,     T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx3,     T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx4,     T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx5,     T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx6,     T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx7,     T(vxxt,vxxt,vxxt), S(0,0))
+AO(drop,     T(vxxt,vxxt,vxxt), S(0,0))
+AO(inci32,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(deci32,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(inci64,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(deci64,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(inc4i32,  T(vxxt,vxxt,vxxt), S(0,0))
+AO(inc8i64,  T(vxxt,vxxt,vxxt), S(0,0))
 
 /* Integer Arithmetic */
 
@@ -29,16 +29,25 @@ AO(iudiv64,  T(i64t,i64t,i64t), S(2,1))
 AO(iurem64,  T(i64t,i64t,i64t), S(2,1))
 AO(imul64,   T(i64t,i64t,i64t), S(2,1))
 
-/* Integer add with remote ALU tos - PREVIOUS cycle */
+/* Integer add with remote ALU tos (PREVIOUS cycle value) */
 
 AO(iadd32r0, T(i32t,vxxt,i32t), S(1,1))
 AO(iadd32r1, T(i32t,vxxt,i32t), S(1,1))
 AO(iadd32r2, T(i32t,vxxt,i32t), S(1,1))
 AO(iadd32r3, T(i32t,vxxt,i32t), S(1,1))
+AO(xxx28,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx29,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx30,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx31,    T(vxxt,vxxt,vxxt), S(0,0))
+
 AO(iadd64r0, T(i64t,vxxt,i64t), S(1,1))
 AO(iadd64r1, T(i64t,vxxt,i64t), S(1,1))
 AO(iadd64r2, T(i64t,vxxt,i64t), S(1,1))
 AO(iadd64r3, T(i64t,vxxt,i64t), S(1,1))
+AO(xxx36,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx37,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx38,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx39,    T(vxxt,vxxt,vxxt), S(0,0))
 
 /* FP Arithmetic*/
 
@@ -47,8 +56,8 @@ AO(fsub32,   T(f32t,f32t,f32t), S(2,1))
 AO(frsub32,  T(f32t,f32t,f32t), S(2,1))
 AO(fdiv32,   T(f32t,f32t,f32t), S(2,1))
 AO(frem32,   T(f32t,f32t,f32t), S(2,1))
-AO(xxx29,    T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx30,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx45,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx46,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(fmul32,   T(f32t,f32t,f32t), S(2,1))
 
 AO(fadd64,   T(f64t,f64t,f64t), S(2,1))
@@ -56,8 +65,8 @@ AO(fsub64,   T(f64t,f64t,f64t), S(2,1))
 AO(frsub64,  T(f64t,f64t,f64t), S(2,1))
 AO(fdiv64,   T(f64t,f64t,f64t), S(2,1))
 AO(frem64,   T(f64t,f64t,f64t), S(2,1))
-AO(xxx37,    T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx38,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx53,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx54,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(fmul64,   T(f64t,f64t,f64t), S(2,1))
 
 /* Shift Binary */
@@ -134,7 +143,8 @@ AO(fcne64,   T(f64t,f64t,i64t), S(2,1))
 AO(fco64,    T(f64t,f64t,i64t), S(2,1))
 AO(fcuo64,   T(f64t,f64t,i64t), S(2,1))
 
-/* Integer comparisons with remote ALU tos - PREVIOUS cycle */
+/* Integer comparisons with remote ALU tos (PREVIOUS cycle value) */
+/* no op space for r4-7 */
 
 AO(iceq32r0, T(i32t,vxxt,i64t), S(1,1))
 AO(iceq32r1, T(i32t,vxxt,i64t), S(1,1))
@@ -224,38 +234,45 @@ AO(xxx173,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx174,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx175,   T(vxxt,vxxt,vxxt), S(0,0))
 
-/* Remote alu TOS access - THIS cycle result */
+/* Remote alu TOS access (THIS cycle result) */
 AO(alur0,    T(vxxt,vxxt,v64t), S(0,1))
 AO(alur1,    T(vxxt,vxxt,v64t), S(0,1))
 AO(alur2,    T(vxxt,vxxt,v64t), S(0,1))
 AO(alur3,    T(vxxt,vxxt,v64t), S(0,1))
+AO(xxx180,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx181,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx182,   T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx183,   T(vxxt,vxxt,vxxt), S(0,0))
 
 /* (Remote) Mem unit value access */
 AO(mem0v0,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem0v1,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem1v0,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem1v1,   T(vxxt,vxxt,v64t), S(0,1))
-
-AO(xxx184,   T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx185,   T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx186,   T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx187,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx188,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx189,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx190,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx191,   T(vxxt,vxxt,vxxt), S(0,0))
 
-/* Select using remote alu condition - PREVIOUS cycle */
+/* Select using remote alu condition (PREVIOUS cycle value) */
 AO(selzr0,   T(v64t,v64t,v64t), S(2,1))
 AO(selzr1,   T(v64t,v64t,v64t), S(2,1))
 AO(selzr2,   T(v64t,v64t,v64t), S(2,1))
 AO(selzr3,   T(v64t,v64t,v64t), S(2,1))
+AO(xxx196,   T(v64t,v64t,v64t), S(2,1))
+AO(xxx197,   T(v64t,v64t,v64t), S(2,1))
+AO(xxx198,   T(v64t,v64t,v64t), S(2,1))
+AO(xxx199,   T(v64t,v64t,v64t), S(2,1))
 AO(selnzr0,  T(v64t,v64t,v64t), S(2,1))
 AO(selnzr1,  T(v64t,v64t,v64t), S(2,1))
 AO(selnzr2,  T(v64t,v64t,v64t), S(2,1))
 AO(selnzr3,  T(v64t,v64t,v64t), S(2,1))
+AO(xxx204,   T(v64t,v64t,v64t), S(2,1))
+AO(xxx205,   T(v64t,v64t,v64t), S(2,1))
+AO(xxx206,   T(v64t,v64t,v64t), S(2,1))
+AO(xxx207,   T(v64t,v64t,v64t), S(2,1))
 
-/* Literal constants */
+/* Literal constants - maybe 0-base negative literals? */
 AO(lit0,     T(vxxt,vxxt,i64t), S(0,1))
 AO(lit1,     T(vxxt,vxxt,i64t), S(0,1))
 AO(lit2,     T(vxxt,vxxt,i64t), S(0,1))
@@ -265,7 +282,25 @@ AO(litm2,    T(vxxt,vxxt,i64t), S(0,1))
 AO(litm3,    T(vxxt,vxxt,i64t), S(0,1))
 AO(litm4,    T(vxxt,vxxt,i64t), S(0,1))
 
-/* TODO 16,32,64 bit lits */
+AO(lit4,     T(vxxt,vxxt,i64t), S(0,1))
+AO(lit6,     T(vxxt,vxxt,i64t), S(0,1))
+AO(litm6,    T(vxxt,vxxt,i64t), S(0,1))
+AO(litm8,    T(vxxt,vxxt,i64t), S(0,1))
+
+AO(lit8,     T(vxxt,vxxt,i64t), S(0,1))
+AO(lit12,    T(vxxt,vxxt,i64t), S(0,1))
+AO(litm12,   T(vxxt,vxxt,i64t), S(0,1))
+AO(litm16,   T(vxxt,vxxt,i64t), S(0,1))
+
+AO(lit16,    T(vxxt,vxxt,i64t), S(0,1))
+AO(lit24,    T(vxxt,vxxt,i64t), S(0,1))
+AO(litm24,   T(vxxt,vxxt,i64t), S(0,1))
+AO(litm32,   T(vxxt,vxxt,i64t), S(0,1))
+
+AO(xxx236,   T(v64t,v64t,v64t), S(2,1))
+AO(xxx237,   T(v64t,v64t,v64t), S(2,1))
+AO(xxx238,   T(v64t,v64t,v64t), S(2,1))
+AO(xxx239,   T(v64t,v64t,v64t), S(2,1))
 
 /* Icache constants */
 AO(i8con0,   T(vxxt,vxxt,i64t), S(0,1))
@@ -284,4 +319,3 @@ AO(i64con0,  T(vxxt,vxxt,i64t), S(0,1))
 AO(i64con1,  T(vxxt,vxxt,i64t), S(0,1))
 AO(i64con2,  T(vxxt,vxxt,i64t), S(0,1))
 AO(i64con3,  T(vxxt,vxxt,i64t), S(0,1))
-

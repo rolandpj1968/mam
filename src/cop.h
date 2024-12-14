@@ -2,4 +2,94 @@
 
 CO(nop)
 CO(hlt)
+CO(jtlp) /* set jump target to lp (return address) */
+CO(jp)   /* jump to jump target */
+CO(ret)  /* jump to jump target and restore sp, bp, lp - TODO how for lp, bp? */
+CO(xxx5)
+CO(xxx6)
+CO(xxx7)
+
+/* Conditional jump to jump target from remote ALU tos - PREVIOUS cycle */
+CO(jpzr0)
+CO(jpzr1)
+CO(jpzr2)
+CO(jpzr3)
+CO(xxx12)
+CO(xxx13)
+CO(xxx14)
+CO(xxx15)
+CO(jpnzr0)
+CO(jpnzr1)
+CO(jpnzr2)
+CO(jpnzr3)
+CO(xxx20)
+CO(xxx21)
+CO(xxx22)
+CO(xxx23)
+
+/* Set ip-relative jmp target from literal */
+CO(jtrlit0)
+CO(jtrlit1) /* not much use :( */
+CO(jtrlit2)
+CO(jtrlit3)
+CO(jtrlit4)
+CO(jtrlit5)
+CO(jtrlit6)
+CO(jtrlit7)
+CO(jtrlitm2)
+CO(jtrlitm3)
+CO(jtrlitm4)
+CO(jtrlitm5)
+CO(jtrlitm6)
+CO(jtrlitm7)
+CO(jtrlitm8)
+CO(jtrlitm9)
+
+/* Set ip-relative jmp target from ic constant */
+CO(jtri8c0)
+CO(jtri8c1)
+CO(jtri8c2)
+CO(jtri8c3)
+CO(jtri16c0)
+CO(jtri16c1)
+CO(jtri16c2)
+CO(jtri16c3)
+CO(jtri32c0)
+CO(jtri32c1)
+CO(jtri32c2)
+CO(jtri32c3)
+CO(jtri64c0)
+CO(jtri64c1)
+CO(jtri64c2)
+CO(jtri64c3)
+
+/* Set ip-relative jmp target from remote ALU tos - PREVIOUS cycle */
+CO(jtr32r0)
+CO(jtr32r1)
+CO(jtr32r2)
+CO(jtr32r3)
+CO(jtr64r0)
+CO(jtr64r1)
+CO(jtr64r2)
+CO(jtr64r3)
+	
+/* Set absolute jmp target from remote ALU tos - PREVIOUS cycle */
+CO(jt32r0)
+CO(jt32r1)
+CO(jt32r2)
+CO(jt32r3)
+CO(jt64r0)
+CO(jt64r1)
+CO(jt64r2)
+CO(jt64r3)
+
+/* Set absolute jmp target from ic constant */
+CO(jti32c0)
+CO(jti32c1)
+CO(jti32c2)
+CO(jti32c3)
+CO(jti64c0)
+CO(jti64c1)
+CO(jti64c2)
+CO(jti64c3)
 

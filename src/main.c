@@ -142,6 +142,7 @@ int main() {
 	/* addm1tom8fast(&mam); */
 	/* addm1tom8fast16(&mam); */
 	//encadd0to7slow(&(CLine){0});
-	runadd0to7slow();
+	//runadd0to7slow();
 	printf("\n#ALU ops is %d\n\n", NAOp);
+	printf("\n#CTL ops is %d\n\n", NCOp);
 }
