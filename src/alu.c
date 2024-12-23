@@ -311,22 +311,15 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 		break;
 	}
 
-/* Literal constants */
-	case AOlit0:
-	case AOlit1:
-	case AOlit2:
-	case AOlit3:      S(ri64) = (i64)(o-AOlit0); break;
-
-	case AOlitm1:
-	case AOlitm2:
-	case AOlitm3:
-	case AOlitm4:     S(ri64) = -(i64)(o-AOlitm1+1); break;
-
 /* Icache constants */
 	case AOi8con0:
 	case AOi8con1:
 	case AOi8con2:
-	case AOi8con3: {
+	case AOi8con3:
+	case AOi8con4:
+	case AOi8con5:
+	case AOi8con6:
+	case AOi8con7: {
 		/* sign-extended */
 		S(ri64) = (i64)(i8)ctlicu8(&mam->ctl, (u8)(o-AOi8con0));
 		break;
@@ -334,7 +327,11 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOi16con0:
 	case AOi16con1:
 	case AOi16con2:
-	case AOi16con3: {
+	case AOi16con3:
+	case AOi16con4:
+	case AOi16con5:
+	case AOi16con6:
+	case AOi16con7: {
 		/* sign-extended */
 		S(ri64) = (i64)(i16)ctlicu16(&mam->ctl, (u8)((o-AOi16con0)*2));
 		break;
@@ -342,7 +339,11 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOi32con0:
 	case AOi32con1:
 	case AOi32con2:
-	case AOi32con3: {
+	case AOi32con3:
+	case AOi32con4:
+	case AOi32con5:
+	case AOi32con6:
+	case AOi32con7: {
 		/* sign-extended */
 		S(ri64) = (i64)(i32)ctlicu32(&mam->ctl, (u8)((o-AOi32con0)*4));
 		break;
@@ -350,7 +351,11 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOi64con0:
 	case AOi64con1:
 	case AOi64con2:
-	case AOi64con3: {
+	case AOi64con3:
+	case AOi64con4:
+	case AOi64con5:
+	case AOi64con6:
+	case AOi64con7: {
 		S(ri64) = (i64)ctlicu64(&mam->ctl, (u8)((o-AOi64con0)*8));
 		break;
 	}

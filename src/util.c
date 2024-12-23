@@ -86,22 +86,22 @@ void mamexei(Mam *mam, Ins i) {
 	mamtick(mam);
 }
 
-static int conclash(bool bcons[4][4], u8 off) {
-	if (off < 4 && bcons[0][off])
+static int conclash(bool bcons[4][8], u8 off) {
+	if (off < 8 && bcons[0][off])
 		return 1;
-	if (off < 8 && bcons[1][off/2])
+	if (off < 16 && bcons[1][off/2])
 		return 1;
-	if (off < 16 && bcons[2][off/4])
+	if (off < 32 && bcons[2][off/4])
 		return 1;
-	if (off < 32 && bcons[3][off/8])
+	if (off < 64 && bcons[3][off/8])
 		return 1;
 	return 0;
 }
 
-static u8 maxconoff(bool bcons[4][4], bool pbcons[4][4]) {
+static u8 maxconoff(bool bcons[4][8], bool pbcons[4][8]) {
 	u8 maxoff = 0;
 	for (u8 n = 0; n < 4; n++) {
-		for (u8 m = 0; m < 4; m++) {
+		for (u8 m = 0; m < 8; m++) {
 			if (bcons[n][m] | pbcons[n][m]) {
 				u8 max = (m<<n) + (1<<n)-1;
 				if (maxoff < max) {
@@ -113,14 +113,14 @@ static u8 maxconoff(bool bcons[4][4], bool pbcons[4][4]) {
 	return maxoff;
 }
 
-EncErr encei(EncIns ei, CLine *ic, bool bc[4][4], u8* poff) {
+EncErr encei(EncIns ei, CLine *ic, bool bc[4][8], u8* poff) {
 	Ins i;
 	u8 off = *poff;
 	u8 conoff;
 	u8 len = 0;
 
 	for (u8 n = 0; n < 4; n++) {
-		for (u8 m = 0; m < 4; m++) {
+		for (u8 m = 0; m < 8; m++) {
 			if (ei.bc[n][m]) {
 				for (u8 i = 0; i < 1<<n; i++) {
 					if (conclash(bc, ((m<<n) + i))) {
@@ -139,7 +139,7 @@ EncErr encei(EncIns ei, CLine *ic, bool bc[4][4], u8* poff) {
 		return EncInsConOvr;
 	}
 	for (u8 n = 0; n < 4; n++) {
-		for (u8 m = 0; m < 4; m++) {
+		for (u8 m = 0; m < 8; m++) {
 			if (ei.bc[n][m]) {
 				assert(!bc[n][m]);
 				bc[n][m] = 1;
@@ -161,7 +161,7 @@ EncErr encei(EncIns ei, CLine *ic, bool bc[4][4], u8* poff) {
 
 EncErr enceis(EncIns ei[], u8 nei, CLine *ic) {
 	u8 off = 0;
-	bool bc[4][4] = {0};
+	bool bc[4][8] = {0};
 	*ic = (CLine){0};
 	for (u8 n = 0; n < nei; n++) {
 		EncErr err = encei(ei[n], ic, bc, &off);
@@ -181,13 +181,13 @@ void dumpei(EncIns ei) {
 	printf(" - ");
 	for (u8 n = 0; n < 4; n++) {
 		printf(" %s [", (char *[4]){"u8", "u16", "u32", "u64"}[n]);
-		for (u8 m = 0; m < 4; m++) {
+		for (u8 m = 0; m < 8; m++) {
 			if (ei.bc[n][m]) {
 				printf((char *[4]){"0x%02lx", "0x%04lx", "0x%08lx", "0x%016lx"}[n], ei.c[n][m]);
 			} else {
 				printf("-");
 			}
-			printf("%s", (m<3 ? "," : ""));
+			printf("%s", (m<7 ? "," : ""));
 		}
 		printf("]%s", (n < 3 ? "," : ""));
 	}

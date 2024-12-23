@@ -2,8 +2,8 @@
 
 static void encadd0to7slow(CLine *ic) {
 	EncIns ei[7] = {
-		{B(AOlit0,   AOlit2,   AOi8con0, AOi8con2), {{1,0,1,0}}, {{4,0,6,0}}},
-		{B(AOlit1,   AOlit3,   AOi8con1, AOi8con3), {{0,1,0,1}}, {{0,5,0,7}}},
+		{B(AOi8con0, AOi8con1, AOi8con2, AOi8con3), {{1,1,1,1,0,0,0,0}}, {{0,2,4,6,0,0,0,0}}},
+		{B(AOi8con4, AOi8con5, AOi8con6, AOi8con7), {{0,0,0,0,1,1,1,1}}, {{0,0,0,0,1,3,5,7}}},
 		{B(AOiadd32, AOiadd32, AOiadd32, AOiadd32), {{0}}, {{0}}},
 		{B(AOalur1,  AOnop,    AOalur3,  AOnop),    {{0}}, {{0}}},
 		{B(AOiadd32, AOnop,    AOiadd32, AOnop),    {{0}}, {{0}}},
@@ -36,7 +36,7 @@ static void runadd0to7slow() {
 	}
 }
 
-
+#if 0
 static void add0to7slow(Mam *mam) {
 	wricu8(&mam->ctl.ic, 0, (u8)4);
 	wricu8(&mam->ctl.ic, 1, (u8)5);
@@ -130,9 +130,10 @@ static void checkmam(Mam *mam) {
 	}
 	printf("\nDone!\n\n");
 }
+#endif /*0*/
 
 int main() {
-	Mam mam = {0};
+	/* Mam mam = {0}; */
 	/* printf("#ALU ops is %d\n", NAOp); */
 	/* mam.dbg = 0; */
 	/* checkmam(&mam); */
@@ -142,7 +143,7 @@ int main() {
 	/* addm1tom8fast(&mam); */
 	/* addm1tom8fast16(&mam); */
 	//encadd0to7slow(&(CLine){0});
-	//runadd0to7slow();
+	runadd0to7slow();
 	printf("\n#ALU ops is %d\n\n", NAOp);
 	printf("\n#CTL ops is %d\n\n", NCOp);
 }

@@ -168,8 +168,8 @@ struct Mam {
 typedef struct EncIns EncIns;
 struct EncIns {
 	Bundle b;
-	bool bc[4][4];
-	u64 c[4][4];
+	bool bc[4][8];
+	u64 c[4][8];
 };
 
 typedef enum EncErr EncErr;
@@ -195,7 +195,7 @@ Bundle ins2bundle(Ins i, u8 *plen);
 Ins bundle2ins(Bundle b, u8 *plen);
 void mamexeb(Mam *mam, Bundle b);
 void mamexei(Mam *mam, Ins i);
-EncErr encei(EncIns ei, CLine *ic, bool bc[4][4], u8* poff);
+EncErr encei(EncIns ei, CLine *ic, bool bc[4][8], u8* poff);
 EncErr enceis(EncIns ei[], u8 nei, CLine *ic);
 void dumpb(Bundle b);
 void dumpei(EncIns ei);
