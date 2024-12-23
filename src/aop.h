@@ -49,26 +49,6 @@ AO(xxx37,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx38,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx39,    T(vxxt,vxxt,vxxt), S(0,0))
 
-/* FP Arithmetic*/
-
-AO(fadd32,   T(f32t,f32t,f32t), S(2,1))
-AO(fsub32,   T(f32t,f32t,f32t), S(2,1))
-AO(frsub32,  T(f32t,f32t,f32t), S(2,1))
-AO(fdiv32,   T(f32t,f32t,f32t), S(2,1))
-AO(frem32,   T(f32t,f32t,f32t), S(2,1))
-AO(xxx45,    T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx46,    T(vxxt,vxxt,vxxt), S(0,0))
-AO(fmul32,   T(f32t,f32t,f32t), S(2,1))
-
-AO(fadd64,   T(f64t,f64t,f64t), S(2,1))
-AO(fsub64,   T(f64t,f64t,f64t), S(2,1))
-AO(frsub64,  T(f64t,f64t,f64t), S(2,1))
-AO(fdiv64,   T(f64t,f64t,f64t), S(2,1))
-AO(frem64,   T(f64t,f64t,f64t), S(2,1))
-AO(xxx53,    T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx54,    T(vxxt,vxxt,vxxt), S(0,0))
-AO(fmul64,   T(f64t,f64t,f64t), S(2,1))
-
 /* Shift Binary */
 
 AO(isar32,   T(i32t,i32t,i32t), S(2,1))
@@ -97,8 +77,6 @@ AO(inot64,   T(i64t,vxxt,i64t), S(1,1))
 
 AO(ineg32,   T(i32t,vxxt,i32t), S(1,1))
 AO(ineg64,   T(i64t,vxxt,i64t), S(1,1))
-AO(fneg32,   T(f32t,vxxt,f32t), S(1,1))
-AO(fneg64,   T(f64t,vxxt,f64t), S(1,1))
 
 /* Comparisons */
 
@@ -124,24 +102,6 @@ AO(icuge64,  T(i64t,i64t,i64t), S(2,1))
 AO(icugt64,  T(i64t,i64t,i64t), S(2,1))
 AO(icule64,  T(i64t,i64t,i64t), S(2,1))
 AO(icult64,  T(i64t,i64t,i64t), S(2,1))
-
-AO(fceq32,   T(f32t,f32t,i64t), S(2,1))
-AO(fcge32,   T(f32t,f32t,i64t), S(2,1))
-AO(fcgt32,   T(f32t,f32t,i64t), S(2,1))
-AO(fcle32,   T(f32t,f32t,i64t), S(2,1))
-AO(fclt32,   T(f32t,f32t,i64t), S(2,1))
-AO(fcne32,   T(f32t,f32t,i64t), S(2,1))
-AO(fco32,    T(f32t,f32t,i64t), S(2,1))
-AO(fcuo32,   T(f32t,f32t,i64t), S(2,1))
-
-AO(fceq64,   T(f64t,f64t,i64t), S(2,1))
-AO(fcge64,   T(f64t,f64t,i64t), S(2,1))
-AO(fcgt64,   T(f64t,f64t,i64t), S(2,1))
-AO(fcle64,   T(f64t,f64t,i64t), S(2,1))
-AO(fclt64,   T(f64t,f64t,i64t), S(2,1))
-AO(fcne64,   T(f64t,f64t,i64t), S(2,1))
-AO(fco64,    T(f64t,f64t,i64t), S(2,1))
-AO(fcuo64,   T(f64t,f64t,i64t), S(2,1))
 
 /* Integer comparisons with remote ALU tos (PREVIOUS cycle value) */
 /* no op space for r4-7 */
@@ -172,27 +132,6 @@ AO(extu16,   T(i64t,vxxt,i64t), S(1,1))
 
 AO(exts32,   T(i64t,vxxt,i64t), S(1,1))
 AO(extu32,   T(i64t,vxxt,i64t), S(1,1))
-
-AO(fext32,   T(f32t,vxxt,f64t), S(1,1))
-AO(ftrunc64, T(f64t,vxxt,f32t), S(1,1))
-
-AO(f32toi32, T(f32t,vxxt,i32t), S(1,1))
-AO(f32tou32, T(f32t,vxxt,i32t), S(1,1))
-AO(f32toi64, T(f32t,vxxt,i64t), S(1,1))
-AO(f32tou64, T(f32t,vxxt,i64t), S(1,1))
-AO(f64toi32, T(f64t,vxxt,i32t), S(1,1))
-AO(f64tou32, T(f64t,vxxt,i32t), S(1,1))
-AO(f64toi64, T(f64t,vxxt,i64t), S(1,1))
-AO(f64tou64, T(f64t,vxxt,i64t), S(1,1))
-
-AO(i32tof32, T(i32t,vxxt,f32t), S(1,1))
-AO(u32tof32, T(i32t,vxxt,f32t), S(1,1))
-AO(i64tof32, T(i64t,vxxt,f32t), S(1,1))
-AO(u64tof32, T(i64t,vxxt,f32t), S(1,1))
-AO(i32tof64, T(i32t,vxxt,f64t), S(1,1))
-AO(u32tof64, T(i32t,vxxt,f64t), S(1,1))
-AO(i64tof64, T(i64t,vxxt,f64t), S(1,1))
-AO(u64tof64, T(i64t,vxxt,f64t), S(1,1))
 
 /* Stack read */
 AO(stk0,     T(vxxt,vxxt,v64t), S(0,1))
@@ -244,7 +183,7 @@ AO(xxx181,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx182,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx183,   T(vxxt,vxxt,vxxt), S(0,0))
 
-/* (Remote) Mem unit value access */
+/* (Remote) Mem unit value access (THIS cycle result) */
 AO(mem0v0,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem0v1,   T(vxxt,vxxt,v64t), S(0,1))
 AO(mem1v0,   T(vxxt,vxxt,v64t), S(0,1))
@@ -273,6 +212,7 @@ AO(xxx206,   T(v64t,v64t,v64t), S(2,1))
 AO(xxx207,   T(v64t,v64t,v64t), S(2,1))
 
 /* Literal constants - maybe 0-base negative literals? */
+
 AO(lit0,     T(vxxt,vxxt,i64t), S(0,1))
 AO(lit1,     T(vxxt,vxxt,i64t), S(0,1))
 AO(lit2,     T(vxxt,vxxt,i64t), S(0,1))
@@ -303,6 +243,7 @@ AO(xxx238,   T(v64t,v64t,v64t), S(2,1))
 AO(xxx239,   T(v64t,v64t,v64t), S(2,1))
 
 /* Icache constants */
+
 AO(i8con0,   T(vxxt,vxxt,i64t), S(0,1))
 AO(i8con1,   T(vxxt,vxxt,i64t), S(0,1))
 AO(i8con2,   T(vxxt,vxxt,i64t), S(0,1))
