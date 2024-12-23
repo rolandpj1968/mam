@@ -9,74 +9,80 @@ AO(deci64,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(inc4i32,  T(vxxt,vxxt,vxxt), S(0,0))
 AO(inc8i64,  T(vxxt,vxxt,vxxt), S(0,0))
 
-/* Integer Arithmetic */
+/* Integer Arithmetic XLEN width */
 
-AO(iadd32,   T(i32t,i32t,i32t), S(2,1))
-AO(isub32,   T(i32t,i32t,i32t), S(2,1))
-AO(irsub32,  T(i32t,i32t,i32t), S(2,1))
-AO(idiv32,   T(i32t,i32t,i32t), S(2,1))
-AO(irem32,   T(i32t,i32t,i32t), S(2,1))
-AO(iudiv32,  T(i32t,i32t,i32t), S(2,1))
-AO(iurem32,  T(i32t,i32t,i32t), S(2,1))
-AO(imul32,   T(i32t,i32t,i32t), S(2,1))
+AO(add,      T(i32t,i32t,i32t), S(2,1))
+AO(sub,      T(i32t,i32t,i32t), S(2,1))
+AO(rsub,     T(i32t,i32t,i32t), S(2,1))
+AO(neg,      T(i32t,vxxt,i32t), S(1,1))
 
-AO(iadd64,   T(i64t,i64t,i64t), S(2,1))
-AO(isub64,   T(i64t,i64t,i64t), S(2,1))
-AO(irsub64,  T(i64t,i64t,i64t), S(2,1))
-AO(idiv64,   T(i64t,i64t,i64t), S(2,1))
-AO(irem64,   T(i64t,i64t,i64t), S(2,1))
-AO(iudiv64,  T(i64t,i64t,i64t), S(2,1))
-AO(iurem64,  T(i64t,i64t,i64t), S(2,1))
-AO(imul64,   T(i64t,i64t,i64t), S(2,1))
+/* TODO 64-bit extension Integer Arithmetic 32-bit width */
 
-/* Integer add with remote ALU tos (PREVIOUS cycle value) */
+AO(addw,     T(i32t,i32t,i32t), S(2,1))
+AO(subw,     T(i32t,i32t,i32t), S(2,1))
+AO(rsubw,    T(i32t,i32t,i32t), S(2,1))
+AO(xxx228,   T(vxxt,vxxt,vxxt), S(0,0))
 
-AO(iadd32r0, T(i32t,vxxt,i32t), S(1,1))
-AO(iadd32r1, T(i32t,vxxt,i32t), S(1,1))
-AO(iadd32r2, T(i32t,vxxt,i32t), S(1,1))
-AO(iadd32r3, T(i32t,vxxt,i32t), S(1,1))
+/* TODO - mul/div extension XLEN WIDTH */
+
+AO(mul,      T(i32t,i32t,i32t), S(2,1))
+AO(mulh,     T(i32t,i32t,i32t), S(2,1))
+AO(mulhsu,   T(i32t,i32t,i32t), S(2,1))
+AO(mulhu,    T(i32t,i32t,i32t), S(2,1))
+AO(div,      T(i32t,i32t,i32t), S(2,1))
+AO(rem,      T(i32t,i32t,i32t), S(2,1))
+AO(divu,     T(i32t,i32t,i32t), S(2,1))
+AO(remu,     T(i32t,i32t,i32t), S(2,1))
+
+/* TODO - 64-bit mul/div extension 32-bit width */
+
+AO(mulw,     T(i64t,i64t,i64t), S(2,1))
+AO(divw,     T(i64t,i64t,i64t), S(2,1))
+AO(remw,     T(i64t,i64t,i64t), S(2,1))
+AO(remuw,    T(i64t,i64t,i64t), S(2,1))
+
+/* Integer add with remote ALU tos (PREVIOUS cycle value) XLEN width */
+
+AO(add.a0,   T(i32t,vxxt,i32t), S(1,1))
+AO(add.a1,   T(i32t,vxxt,i32t), S(1,1))
+AO(add.a2,   T(i32t,vxxt,i32t), S(1,1))
+AO(add.a3,   T(i32t,vxxt,i32t), S(1,1))
 AO(xxx28,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx29,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx30,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx31,    T(vxxt,vxxt,vxxt), S(0,0))
 
-AO(iadd64r0, T(i64t,vxxt,i64t), S(1,1))
-AO(iadd64r1, T(i64t,vxxt,i64t), S(1,1))
-AO(iadd64r2, T(i64t,vxxt,i64t), S(1,1))
-AO(iadd64r3, T(i64t,vxxt,i64t), S(1,1))
+/* TODO  64-bit extension / Integer add with remote ALU tos (PREVIOUS cycle value) 32-bit width */
+
+AO(addw.a0,  T(i64t,vxxt,i64t), S(1,1))
+AO(addw.a1,  T(i64t,vxxt,i64t), S(1,1))
+AO(addw.a2,  T(i64t,vxxt,i64t), S(1,1))
+AO(addw.a3,  T(i64t,vxxt,i64t), S(1,1))
 AO(xxx36,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx37,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx38,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx39,    T(vxxt,vxxt,vxxt), S(0,0))
 
-/* Shift Binary */
+/* Shift Binary - XLEN width */
 
-AO(isar32,   T(i32t,i32t,i32t), S(2,1))
-AO(ishr32,   T(i32t,i32t,i32t), S(2,1))
-AO(ishl32,   T(i32t,i32t,i32t), S(2,1))
-AO(irotr32,  T(i32t,i32t,i32t), S(2,1))
+AO(sll,      T(i32t,i32t,i32t), S(2,1))
+AO(srl,      T(i32t,i32t,i32t), S(2,1))
+AO(sra,      T(i32t,i32t,i32t), S(2,1))
+AO(xxx202,   T(vxxt,vxxt,vxxt), S(0,0))
 
-AO(isar64,   T(i64t,i32t,i64t), S(2,1))
-AO(ishr64,   T(i64t,i32t,i64t), S(2,1))
-AO(ishl64,   T(i64t,i32t,i64t), S(2,1))
-AO(irotr64,  T(i64t,i32t,i64t), S(2,1))
+/* TODO  64-bit extension / Shift Binary - 32-bit width */
 
-/* Bits */
+AO(sllw,     T(i32t,i32t,i32t), S(2,1))
+AO(srlw,     T(i32t,i32t,i32t), S(2,1))
+AO(sraw,     T(i32t,i32t,i32t), S(2,1))
+AO(xxx402,   T(vxxt,vxxt,vxxt), S(0,0))
 
-AO(iand32,   T(i32t,i32t,i32t), S(2,1))
-AO(ior32,    T(i32t,i32t,i32t), S(2,1))
-AO(ixor32,   T(i32t,i32t,i32t), S(2,1))
-AO(inot32,   T(i32t,vxxt,i32t), S(1,1))
+/* Bits - XLEN width */
 
-AO(iand64,   T(i64t,i64t,i64t), S(2,1))
-AO(ior64,    T(i64t,i64t,i64t), S(2,1))
-AO(ixor64,   T(i64t,i64t,i64t), S(2,1))
-AO(inot64,   T(i64t,vxxt,i64t), S(1,1))
-
-/* Arithmetic Unary */
-
-AO(ineg32,   T(i32t,vxxt,i32t), S(1,1))
-AO(ineg64,   T(i64t,vxxt,i64t), S(1,1))
+AO(and,      T(i32t,i32t,i32t), S(2,1))
+AO(or,       T(i32t,i32t,i32t), S(2,1))
+AO(xor,      T(i32t,i32t,i32t), S(2,1))
+AO(not,      T(i32t,vxxt,i32t), S(1,1))
 
 /* Comparisons */
 
