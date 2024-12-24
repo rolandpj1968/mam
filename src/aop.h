@@ -1,6 +1,6 @@
-// TODO - fix types after riscv-fication
-
 /* alu ops */
+
+/* -------- Base ISA -------- */
 
 AO(nop,      T(vxxt,vxxt,vxxt), S(0,0))
 AO(drop,     T(vxxt,vxxt,vxxt), S(0,0))
@@ -18,31 +18,6 @@ AO(sub,      T(i64t,i64t,i64t), S(2,1))
 AO(rsub,     T(i64t,i64t,i64t), S(2,1))
 AO(neg,      T(i64t,vxxt,i64t), S(1,1))
 
-/* TODO 64-bit extension Integer Arithmetic 32-bit width */
-
-AO(addw,     T(i32t,i32t,i32t), S(2,1))
-AO(subw,     T(i32t,i32t,i32t), S(2,1))
-AO(rsubw,    T(i32t,i32t,i32t), S(2,1))
-AO(xxx228,   T(vxxt,vxxt,vxxt), S(0,0))
-
-/* TODO - mul/div extension XLEN WIDTH */
-
-AO(mul,      T(i64t,i64t,i64t), S(2,1))
-AO(mulh,     T(i64t,i64t,i64t), S(2,1))
-AO(mulhsu,   T(i64t,i64t,i64t), S(2,1))
-AO(mulhu,    T(i64t,i64t,i64t), S(2,1))
-AO(div,      T(i64t,i64t,i64t), S(2,1))
-AO(rem,      T(i64t,i64t,i64t), S(2,1))
-AO(divu,     T(i64t,i64t,i64t), S(2,1))
-AO(remu,     T(i64t,i64t,i64t), S(2,1))
-
-/* TODO - 64-bit mul/div extension 32-bit width */
-
-AO(mulw,     T(i32t,i32t,i32t), S(2,1))
-AO(divw,     T(i32t,i32t,i32t), S(2,1))
-AO(remw,     T(i32t,i32t,i32t), S(2,1))
-AO(remuw,    T(i32t,i32t,i32t), S(2,1))
-
 /* Integer add with remote ALU tos (PREVIOUS cycle value) XLEN width */
 
 AO(add_a0,   T(i64t,vxxt,i64t), S(1,1))
@@ -54,30 +29,12 @@ AO(xxx29,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx30,    T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx31,    T(vxxt,vxxt,vxxt), S(0,0))
 
-/* TODO  64-bit extension / Integer add with remote ALU tos (PREVIOUS cycle value) 32-bit width */
-
-AO(addw_a0,  T(i32t,vxxt,i32t), S(1,1))
-AO(addw_a1,  T(i32t,vxxt,i32t), S(1,1))
-AO(addw_a2,  T(i32t,vxxt,i32t), S(1,1))
-AO(addw_a3,  T(i32t,vxxt,i32t), S(1,1))
-AO(xxx36,    T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx37,    T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx38,    T(vxxt,vxxt,vxxt), S(0,0))
-AO(xxx39,    T(vxxt,vxxt,vxxt), S(0,0))
-
 /* Shift Binary - XLEN width */
 
 AO(sll,      T(i64t,i64t,i64t), S(2,1))
 AO(srl,      T(i64t,i64t,i64t), S(2,1))
 AO(sra,      T(i64t,i64t,i64t), S(2,1))
 AO(xxx202,   T(vxxt,vxxt,vxxt), S(0,0))
-
-/* TODO  64-bit extension / Shift Binary - 32-bit width */
-
-AO(sllw,     T(i32t,i32t,i32t), S(2,1))
-AO(srlw,     T(i32t,i32t,i32t), S(2,1))
-AO(sraw,     T(i32t,i32t,i32t), S(2,1))
-AO(xxx402,   T(vxxt,vxxt,vxxt), S(0,0))
 
 /* Bits - XLEN width */
 
@@ -94,7 +51,6 @@ AO(seq,      T(i64t,i64t,i64t), S(2,1))
 AO(xxx406,   T(vxxt,vxxt,vxxt), S(0,0))
 
 /* Integer comparisons with remote ALU tos (PREVIOUS cycle value) XLEN width */
-/* no op space for r4-7 */
 
 AO(slt_a0,   T(i64t,vxxt,i64t), S(1,1))
 AO(slt_a1,   T(i64t,vxxt,i64t), S(1,1))
@@ -179,7 +135,7 @@ AO(xxx189,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx190,   T(vxxt,vxxt,vxxt), S(0,0))
 AO(xxx191,   T(vxxt,vxxt,vxxt), S(0,0))
 
-/* Select using remote alu condition (PREVIOUS cycle value - this cycle value?) */
+/* Select using remote alu condition (THIS cycle value) */
 AO(selz_a0,  T(v64t,v64t,v64t), S(2,1))
 AO(selz_a1,  T(v64t,v64t,v64t), S(2,1))
 AO(selz_a2,  T(v64t,v64t,v64t), S(2,1))
@@ -224,7 +180,45 @@ AO(conw5,    T(vxxt,vxxt,i64t), S(0,1))
 AO(conw6,    T(vxxt,vxxt,i64t), S(0,1))
 AO(conw7,    T(vxxt,vxxt,i64t), S(0,1))
 
-/* TODO - 64-bit extension */
+/* -------- Mul/Div Extension -------- */
+
+AO(mul,      T(i64t,i64t,i64t), S(2,1))
+AO(mulh,     T(i64t,i64t,i64t), S(2,1))
+AO(mulhsu,   T(i64t,i64t,i64t), S(2,1))
+AO(mulhu,    T(i64t,i64t,i64t), S(2,1))
+AO(div,      T(i64t,i64t,i64t), S(2,1))
+AO(rem,      T(i64t,i64t,i64t), S(2,1))
+AO(divu,     T(i64t,i64t,i64t), S(2,1))
+AO(remu,     T(i64t,i64t,i64t), S(2,1))
+
+/* -------- MAM64 Extension -------- */
+
+/* Integer Arithmetic 32-bit width */
+
+AO(addw,     T(i32t,i32t,i32t), S(2,1))
+AO(subw,     T(i32t,i32t,i32t), S(2,1))
+AO(rsubw,    T(i32t,i32t,i32t), S(2,1))
+AO(xxx228,   T(vxxt,vxxt,vxxt), S(0,0))
+
+/* Integer add with remote ALU tos (PREVIOUS cycle value) 32-bit width */
+
+AO(addw_a0,  T(i32t,vxxt,i32t), S(1,1))
+AO(addw_a1,  T(i32t,vxxt,i32t), S(1,1))
+AO(addw_a2,  T(i32t,vxxt,i32t), S(1,1))
+AO(addw_a3,  T(i32t,vxxt,i32t), S(1,1))
+AO(xxx36,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx37,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx38,    T(vxxt,vxxt,vxxt), S(0,0))
+AO(xxx39,    T(vxxt,vxxt,vxxt), S(0,0))
+
+/* Shift Binary - 32-bit width */
+
+AO(sllw,     T(i32t,i32t,i32t), S(2,1))
+AO(srlw,     T(i32t,i32t,i32t), S(2,1))
+AO(sraw,     T(i32t,i32t,i32t), S(2,1))
+AO(xxx402,   T(vxxt,vxxt,vxxt), S(0,0))
+
+/* 64-bit Icache constants */
 AO(cond0,    T(vxxt,vxxt,i64t), S(0,1))
 AO(cond1,    T(vxxt,vxxt,i64t), S(0,1))
 AO(cond2,    T(vxxt,vxxt,i64t), S(0,1))
@@ -233,3 +227,11 @@ AO(cond4,    T(vxxt,vxxt,i64t), S(0,1))
 AO(cond5,    T(vxxt,vxxt,i64t), S(0,1))
 AO(cond6,    T(vxxt,vxxt,i64t), S(0,1))
 AO(cond7,    T(vxxt,vxxt,i64t), S(0,1))
+
+/* -------- MAM64 + Mul/Div Extension -------- */
+
+AO(mulw,     T(i32t,i32t,i32t), S(2,1))
+AO(divw,     T(i32t,i32t,i32t), S(2,1))
+AO(remw,     T(i32t,i32t,i32t), S(2,1))
+AO(remuw,    T(i32t,i32t,i32t), S(2,1))
+

@@ -260,6 +260,7 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOrd_m1v1:    skip = 1; break;
 
 /* Select using remote alu condition */
+// TODO - THIS cycle value - move to exe1
 	case AOselz_a0:
 	case AOselz_a1:
 	case AOselz_a2:
