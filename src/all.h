@@ -19,6 +19,15 @@ typedef double f64;
 
 typedef u64 v64;
 
+typedef enum ExtT ExtT;
+enum ExtT {
+	ExtNone,
+	ExtBase,
+	Ext64,
+	ExtMulDiv,
+	ExtMulDiv64,
+};
+
 typedef enum UnitT UnitT;
 enum UnitT {
 	AluU,
@@ -38,7 +47,7 @@ enum Type {
 
 typedef enum AO AO;
 enum AO {
-#define AO(op, t, s) AO##op,
+#define AO(op, e, t, s) AO##op,
 #include "aop.h"
 #undef AO
 	NAOp,
@@ -46,6 +55,7 @@ enum AO {
 
 typedef struct Op Op;
 struct Op {
+	ExtT ext;
 	UnitT unit;
 	char *name;
 };
