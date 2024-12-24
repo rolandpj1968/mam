@@ -4,11 +4,11 @@ static void encadd0to7slow(CLine *ic) {
 	EncIns ei[7] = {
 		{B(AOconb0, AOconb1, AOconb2, AOconb3), {{1,1,1,1,0,0,0,0}}, {{0,2,4,6,0,0,0,0}}},
 		{B(AOconb4, AOconb5, AOconb6, AOconb7), {{0,0,0,0,1,1,1,1}}, {{0,0,0,0,1,3,5,7}}},
-		{B(AOaddw, AOaddw, AOaddw, AOaddw), {{0}}, {{0}}},
-		{B(AOrd_a1,  AOnop,    AOrd_a3,  AOnop),    {{0}}, {{0}}},
-		{B(AOaddw, AOnop,    AOaddw, AOnop),    {{0}}, {{0}}},
-		{B(AOrd_a2,  AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
-		{B(AOaddw, AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
+		{B(AOaddw,  AOaddw,  AOaddw,  AOaddw),  {{0}}, {{0}}},
+		{B(AOrd_a1, AOnop,   AOrd_a3, AOnop),   {{0}}, {{0}}},
+		{B(AOaddw,  AOnop,   AOaddw,  AOnop),   {{0}}, {{0}}},
+		{B(AOrd_a2, AOnop,   AOnop,   AOnop),   {{0}}, {{0}}},
+		{B(AOaddw,  AOnop,   AOnop,   AOnop),   {{0}}, {{0}}},
 	};
 	dumpeis(ei, 7);
 	printf("\n");

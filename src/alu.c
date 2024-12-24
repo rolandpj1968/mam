@@ -19,29 +19,29 @@ static v64 i64ttov64t(u64 v) {
 	return (u64)v;
 }
 
-static v64 regr(Alu* alu, u8 n) {
+static v64 rd_r(Alu* alu, u8 n) {
 	assert(n < 4);
 	return alu->reg[n];
 }
 
-static void regw(Alu* alu, u8 n, v64 v) {
+static void wr_r(Alu* alu, u8 n, v64 v) {
 	assert(n < 4);
 	alu->reg[n] = v;
 }
 
-static v64 stkr(Alu* alu, u8 n) {
+static v64 rd_s(Alu* alu, u8 n) {
 	assert(n < 4);
 	return alu->stk[(alu->tos+n)&3];
 }
 
-static void stkw(Alu* alu, u8 n, v64 v) {
+static void wr_s(Alu* alu, u8 n, v64 v) {
 	assert(n < 4);
 	alu->stk[(alu->tos+n)&3] = v;
 }
 
 /* full stack */
 static v64 pop(Alu* alu) {
-	v64 v = stkr(alu, 0);
+	v64 v = rd_s(alu, 0);
 	alu->tos = (alu->tos-1) & 3;
 	return v;
 }
@@ -49,7 +49,7 @@ static v64 pop(Alu* alu) {
 /* full stack */
 static void push(Alu* alu, v64 v) {
 	alu->tos = (alu->tos+1) & 3;
-	stkw(alu, 0, v);
+	wr_s(alu, 0, v);
 }
 
 #define S(a) a##b = 1; a
@@ -121,28 +121,28 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 
 /* Arithmetic Binary*/
 
-	case AOadd:       S(ri32) = V(a0i32) + V(a1i32); break;
-	case AOsub:       S(ri32) = V(a0i32) - V(a1i32); break;
-	case AOrsub:      S(ri32) = V(a1i32) - V(a0i32); break;
-	case AOneg:       S(ri32) = -V(a0i32); break;
+	case AOadd:       S(ri64) = V(a0i64) + V(a1i64); break;
+	case AOsub:       S(ri64) = V(a0i64) - V(a1i64); break;
+	case AOrsub:      S(ri64) = V(a1i64) - V(a0i64); break;
+	case AOneg:       S(ri64) = -V(a0i64); break;
 
-	case AOaddw:      S(ri64) = V(a0i64) + V(a1i64); break;
-	case AOsubw:      S(ri64) = V(a0i64) - V(a1i64); break;
-	case AOrsubw:     S(ri64) = V(a1i64) - V(a0i64); break;
+	case AOaddw:      S(ri32) = V(a0i32) + V(a1i32); break;
+	case AOsubw:      S(ri32) = V(a0i32) - V(a1i32); break;
+	case AOrsubw:     S(ri32) = V(a1i32) - V(a0i32); break;
 
-	case AOmul:       S(ri32) = V(a0i32) * V(a1i32); break;
+	case AOmul:       S(ri64) = V(a0i64) * V(a1i64); break;
 	case AOmulh:      alu->err = AluNoImpl; break;
 	case AOmulhsu:    alu->err = AluNoImpl; break;
 	case AOmulhu:     alu->err = AluNoImpl; break;
-	case AOdiv:       S(ri32) = V(a0i32) / V(a1i32); break;
-	case AOrem:       S(ri32) = V(a0i32) % V(a1i32); break;
-	case AOdivu:      S(ri32) = (i32)((u32)V(a0i32) / (u32)V(a1i32)); break;
-	case AOremu:      S(ri32) = (i32)((u32)V(a0i32) % (u32)V(a1i32)); break;
+	case AOdiv:       S(ri64) = V(a0i64) / V(a1i64); break;
+	case AOrem:       S(ri64) = V(a0i64) % V(a1i64); break;
+	case AOdivu:      S(ri64) = (i64)((u64)V(a0i64) / (u64)V(a1i64)); break;
+	case AOremu:      S(ri64) = (i64)((u64)V(a0i64) % (u64)V(a1i64)); break;
 
-	case AOmulw:      S(ri64) = V(a0i64) * V(a1i64); break;
-	case AOdivw:      S(ri64) = V(a0i64) / V(a1i64);	break;
-	case AOremw:      S(ri64) = V(a0i64) % V(a1i64); break;
-	case AOremuw:     S(ri64) = (i64)((u64)V(a0i64) % (u64)V(a1i64)); break;
+	case AOmulw:      S(ri32) = V(a0i32) * V(a1i32); break;
+	case AOdivw:      S(ri32) = V(a0i32) / V(a1i32);	break;
+	case AOremw:      S(ri32) = V(a0i32) % V(a1i32); break;
+	case AOremuw:     S(ri32) = (i32)((u32)V(a0i32) % (u32)V(a1i32)); break;
 
 /* Integer add with remote ALU tos */
 
@@ -151,7 +151,7 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOadd_a2:
 	case AOadd_a3: {
 		v64 a1r = mamalutos(mam, (u8)(o-AOadd_a0));
-		S(ri32) = V(a0i32) + (i32)a1r;
+		S(ri64) = V(a0i64) + (i64)a1r;
 		break;
 	}
 	case AOaddw_a0:
@@ -159,15 +159,15 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOaddw_a2:
 	case AOaddw_a3: {
 		v64 a1r = mamalutos(mam, (u8)(o-AOaddw_a0));
-		S(ri64) = V(a0i64) + (i64)a1r;
+		S(ri32) = V(a0i32) + (i32)a1r;
 		break;
 	}
 
 /* Shift Binary */
 
-	case AOsll:       S(ri32) = (V(a0i32) << (u32)V(a1i32)); break;
-	case AOsrl:       S(ri32) = (i32)((u32)V(a0i32) >> (u32)V(a1i32)); break;
-	case AOsra:       S(ri32) = (V(a0i32) >> (u32)V(a1i32)); break;
+	case AOsll:       S(ri64) = (V(a0i64) << (u64)V(a1i64)); break;
+	case AOsrl:       S(ri64) = (i64)((u64)V(a0i64) >> (u64)V(a1i64)); break;
+	case AOsra:       S(ri64) = (V(a0i64) >> (u64)V(a1i64)); break;
 
 	case AOsllw:      S(ri32) = (V(a0i32) << (u32)V(a1i32)); break;
 	case AOsrlw:      S(ri32) = (i32)((u32)V(a0i32) >> (u32)V(a1i32)); break;
@@ -182,8 +182,8 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 
 /* Comparisons */
 
-	case AOslt:       S(ri64) = (i64)(V(a0i64) <  V(a1i64)); break;
-	case AOsltu:      S(ri64) = (i64)((u64)V(a0i64) <  (u64)V(a1i64)); break;
+	case AOslt:       S(ri64) = (i64)(V(a0i64) < V(a1i64)); break;
+	case AOsltu:      S(ri64) = (i64)((u64)V(a0i64) < (u64)V(a1i64)); break;
 	case AOseq:       S(ri64) = (i64)(V(a0i64) == V(a1i64)); break;
 
 /* Integer comparisons with remote ALU tos */
@@ -224,28 +224,28 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	case AOextuw:     S(ri64) = (i64)(u32)V(a0i64); break;
 
 /* Stack read */
-	case AOrd_s0:     S(r) = stkr(alu, 0); break;
-	case AOrd_s1:     S(r) = stkr(alu, 1); break;
-	case AOrd_s2:     S(r) = stkr(alu, 2); break;
-	case AOrd_s3:     S(r) = stkr(alu, 3); break;
+	case AOrd_s0:     S(r) = rd_s(alu, 0); break;
+	case AOrd_s1:     S(r) = rd_s(alu, 1); break;
+	case AOrd_s2:     S(r) = rd_s(alu, 2); break;
+	case AOrd_s3:     S(r) = rd_s(alu, 3); break;
 
 /* Register read */
-	case AOrd_r0:     S(r) = regr(alu, 0); break;
-	case AOrd_r1:     S(r) = regr(alu, 1); break;
-	case AOrd_r2:     S(r) = regr(alu, 2); break;
-	case AOrd_r3:     S(r) = regr(alu, 3); break;
+	case AOrd_r0:     S(r) = rd_r(alu, 0); break;
+	case AOrd_r1:     S(r) = rd_r(alu, 1); break;
+	case AOrd_r2:     S(r) = rd_r(alu, 2); break;
+	case AOrd_r3:     S(r) = rd_r(alu, 3); break;
 
 /* Register write popping */
-	case AOwp_r0:     regw(alu, 0, V(a0)); break;
-	case AOwp_r1:     regw(alu, 1, V(a0)); break;
-	case AOwp_r2:     regw(alu, 2, V(a0)); break;
-	case AOwp_r3:     regw(alu, 3, V(a0)); break;
+	case AOwp_r0:     wr_r(alu, 0, V(a0)); break;
+	case AOwp_r1:     wr_r(alu, 1, V(a0)); break;
+	case AOwp_r2:     wr_r(alu, 2, V(a0)); break;
+	case AOwp_r3:     wr_r(alu, 3, V(a0)); break;
 
 /* Register write non-popping */
-	case AOwr_r0:     regw(alu, 0, V(a0)); S(r) = a0; break;
-	case AOwr_r1:     regw(alu, 1, V(a0)); S(r) = a0; break;
-	case AOwr_r2:     regw(alu, 2, V(a0)); S(r) = a0; break;
-	case AOwr_r3:     regw(alu, 3, V(a0)); S(r) = a0; break;
+	case AOwr_r0:     wr_r(alu, 0, V(a0)); S(r) = a0; break;
+	case AOwr_r1:     wr_r(alu, 1, V(a0)); S(r) = a0; break;
+	case AOwr_r2:     wr_r(alu, 2, V(a0)); S(r) = a0; break;
+	case AOwr_r3:     wr_r(alu, 3, V(a0)); S(r) = a0; break;
 
 /* Remote alu TOS access */
 	case AOrd_a0:
@@ -375,5 +375,5 @@ void aluexe1(Mam *mam, Alu *alu, AO o) {
 }
 
 v64 alutos(Alu *alu) {
-	return stkr(alu, 0);
+	return rd_s(alu, 0);
 }
