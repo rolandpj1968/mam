@@ -47,7 +47,8 @@ enum Type {
 
 typedef enum AO AO;
 enum AO {
-#define AO(op, e, t, s) AO##op,
+#define O(o) o
+#define AO(op, o, e, t, s) AO##op o,
 #include "aop.h"
 #undef AO
 	NAOp,
