@@ -93,19 +93,18 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	}
 
 	switch (o) {
-	case AOidiv32:
-	case AOirem32:
-	case AOiudiv32:
-	case AOiurem32:
+	case AOdivw:
+	case AOremw:
+	case AOremuw:
 		if (V(a1i32) == 0) {
 			alu->err = AluIDiv0;
 			goto Done;
 		}
 		break;
-	case AOidiv64:
-	case AOirem64:
-	case AOiudiv64:
-	case AOiurem64:
+	case AOdiv:
+	case AOrem:
+	case AOdivu:
+	case AOremu:
 		if (V(a1i64) == 0) {
 			alu->err = AluIDiv0;
 			goto Done;
@@ -115,248 +114,215 @@ void aluexe0(Mam *mam, Alu *alu, AO o) {
 	}
 
 	switch (o) {
+
 /* alu ops */
 
 	case AOnop:      break;
 
 /* Arithmetic Binary*/
 
-	case AOiadd32:    S(ri32) = V(a0i32) + V(a1i32); break;
-	case AOisub32:    S(ri32) = V(a0i32) - V(a1i32); break;
-	case AOirsub32:   S(ri32) = V(a1i32) - V(a0i32); break;
-	case AOidiv32:    S(ri32) = V(a0i32) / V(a1i32);	break;
-	case AOirem32:    S(ri32) = V(a0i32) % V(a1i32); break;
-	case AOiudiv32:   S(ri32) = (i32)((u32)V(a0i32) / (u32)V(a1i32)); break;
-	case AOiurem32:   S(ri32) = (i32)((u32)V(a0i32) % (u32)V(a1i32)); break;
-	case AOimul32:    S(ri32) = V(a0i32) * V(a1i32); break;
+	case AOadd:       S(ri32) = V(a0i32) + V(a1i32); break;
+	case AOsub:       S(ri32) = V(a0i32) - V(a1i32); break;
+	case AOrsub:      S(ri32) = V(a1i32) - V(a0i32); break;
+	case AOneg:       S(ri32) = -V(a0i32); break;
 
-	case AOiadd64:    S(ri64) = V(a0i64) + V(a1i64); break;
-	case AOisub64:    S(ri64) = V(a0i64) - V(a1i64); break;
-	case AOirsub64:   S(ri64) = V(a1i64) - V(a0i64); break;
-	case AOidiv64:    S(ri64) = V(a0i64) / V(a1i64);	break;
-	case AOirem64:    S(ri64) = V(a0i64) % V(a1i64); break;
-	case AOiudiv64:   S(ri64) = (i64)((u64)V(a0i64) / (u64)V(a1i64)); break;
-	case AOiurem64:   S(ri64) = (i64)((u64)V(a0i64) % (u64)V(a1i64)); break;
-	case AOimul64:    S(ri64) = V(a0i64) * V(a1i64); break;
+	case AOaddw:      S(ri64) = V(a0i64) + V(a1i64); break;
+	case AOsubw:      S(ri64) = V(a0i64) - V(a1i64); break;
+	case AOrsubw:     S(ri64) = V(a1i64) - V(a0i64); break;
+
+	case AOmul:       S(ri32) = V(a0i32) * V(a1i32); break;
+	case AOmulh:      alu->err = AluNoImpl; break;
+	case AOmulhsu:    alu->err = AluNoImpl; break;
+	case AOmulhu:     alu->err = AluNoImpl; break;
+	case AOdiv:       S(ri32) = V(a0i32) / V(a1i32); break;
+	case AOrem:       S(ri32) = V(a0i32) % V(a1i32); break;
+	case AOdivu:      S(ri32) = (i32)((u32)V(a0i32) / (u32)V(a1i32)); break;
+	case AOremu:      S(ri32) = (i32)((u32)V(a0i32) % (u32)V(a1i32)); break;
+
+	case AOmulw:      S(ri64) = V(a0i64) * V(a1i64); break;
+	case AOdivw:      S(ri64) = V(a0i64) / V(a1i64);	break;
+	case AOremw:      S(ri64) = V(a0i64) % V(a1i64); break;
+	case AOremuw:     S(ri64) = (i64)((u64)V(a0i64) % (u64)V(a1i64)); break;
 
 /* Integer add with remote ALU tos */
 
-	case AOiadd32r0:
-	case AOiadd32r1:
-	case AOiadd32r2:
-	case AOiadd32r3: {
-		v64 a1r = mamalutos(mam, (u8)(o-AOiadd32r0));
+	case AOadd_a0:
+	case AOadd_a1:
+	case AOadd_a2:
+	case AOadd_a3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOadd_a0));
 		S(ri32) = V(a0i32) + (i32)a1r;
 		break;
 	}
-	case AOiadd64r0:
-	case AOiadd64r1:
-	case AOiadd64r2:
-	case AOiadd64r3: {
-		v64 a1r = mamalutos(mam, (u8)(o-AOiadd64r0));
+	case AOaddw_a0:
+	case AOaddw_a1:
+	case AOaddw_a2:
+	case AOaddw_a3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOaddw_a0));
 		S(ri64) = V(a0i64) + (i64)a1r;
 		break;
 	}
 
 /* Shift Binary */
 
-	case AOisar32:    S(ri32) = (V(a0i32) >> (u32)V(a1i32)); break;
-	case AOishr32:    S(ri32) = (i32)((u32)V(a0i32) >> (u32)V(a1i32)); break;
-	case AOishl32:    S(ri32) = (V(a0i32) << (u32)V(a1i32)); break;
-	case AOirotr32:   alu->err = AluNoImpl; break;
+	case AOsll:       S(ri32) = (V(a0i32) << (u32)V(a1i32)); break;
+	case AOsrl:       S(ri32) = (i32)((u32)V(a0i32) >> (u32)V(a1i32)); break;
+	case AOsra:       S(ri32) = (V(a0i32) >> (u32)V(a1i32)); break;
 
-	case AOisar64:    S(ri64) = (V(a0i64) >> (u64)V(a1i32)); break;
-	case AOishr64:    S(ri64) = (i64)((u64)V(a0i64) >> (u64)V(a1i32)); break;
-	case AOishl64:    S(ri64) = (V(a0i64) << (u64)V(a1i32)); break;
-	case AOirotr64:   alu->err = AluNoImpl; break;
+	case AOsllw:      S(ri32) = (V(a0i32) << (u32)V(a1i32)); break;
+	case AOsrlw:      S(ri32) = (i32)((u32)V(a0i32) >> (u32)V(a1i32)); break;
+	case AOsraw:      S(ri32) = (V(a0i32) >> (u32)V(a1i32)); break;
 
 /* Bits */
 
-	case AOiand32:    S(ri32) = V(a0i32) & V(a1i32); break;
-	case AOior32:     S(ri32) = V(a0i32) | V(a1i32); break;
-	case AOixor32:    S(ri32) = V(a0i32) ^ V(a1i32); break;
-	case AOinot32:    S(ri32) = ~V(a0i32); break;
-
-	case AOiand64:    S(ri64) = V(a0i64) & V(a1i64); break;
-	case AOior64:     S(ri64) = V(a0i64) | V(a1i64); break;
-	case AOixor64:    S(ri64) = V(a0i64) ^ V(a1i64); break;
-	case AOinot64:    S(ri64) = ~V(a0i64); break;
-
-/* Arithmetic Unary */
-
-	case AOineg32:    S(ri32) = -V(a0i32); break;
-	case AOineg64:    S(ri64) = -V(a0i64); break;
+	case AOand:       S(ri64) = V(a0i64) & V(a1i64); break;
+	case AOor:        S(ri64) = V(a0i64) | V(a1i64); break;
+	case AOxor:       S(ri64) = V(a0i64) ^ V(a1i64); break;
+	case AOnot:       S(ri64) = ~V(a0i64); break;
 
 /* Comparisons */
 
-	case AOiceq32:    S(ri64) = (i64)(V(a0i32) == V(a1i32)); break;
-	case AOicne32:    S(ri64) = (i64)(V(a0i32) != V(a1i32)); break;
-	case AOiceq64:    S(ri64) = (i64)(V(a0i64) == V(a1i64)); break;
-	case AOicne64:    S(ri64) = (i64)(V(a0i64) != V(a1i64)); break;
-
-	case AOicsge32:   S(ri64) = (i64)(V(a0i32) >= V(a1i32)); break;
-	case AOicsgt32:   S(ri64) = (i64)(V(a0i32) >  V(a1i32)); break;
-	case AOicsle32:   S(ri64) = (i64)(V(a0i32) <= V(a1i32)); break;
-	case AOicslt32:   S(ri64) = (i64)(V(a0i32) <  V(a1i32)); break;
-	case AOicuge32:   S(ri64) = (i64)((u32)V(a0i32) >= (u32)V(a1i32)); break;
-	case AOicugt32:   S(ri64) = (i64)((u32)V(a0i32) >  (u32)V(a1i32)); break;
-	case AOicule32:   S(ri64) = (i64)((u32)V(a0i32) <= (u32)V(a1i32)); break;
-	case AOicult32:   S(ri64) = (i64)((u32)V(a0i32) <  (u32)V(a1i32)); break;
-
-	case AOicsge64:   S(ri64) = (i64)(V(a0i64) >= V(a1i64)); break;
-	case AOicsgt64:   S(ri64) = (i64)(V(a0i64) >  V(a1i64)); break;
-	case AOicsle64:   S(ri64) = (i64)(V(a0i64) <= V(a1i64)); break;
-	case AOicslt64:   S(ri64) = (i64)(V(a0i64) <  V(a1i64)); break;
-	case AOicuge64:   S(ri64) = (i64)((u64)V(a0i64) >= (u64)V(a1i64)); break;
-	case AOicugt64:   S(ri64) = (i64)((u64)V(a0i64) >  (u64)V(a1i64)); break;
-	case AOicule64:   S(ri64) = (i64)((u64)V(a0i64) <= (u64)V(a1i64)); break;
-	case AOicult64:   S(ri64) = (i64)((u64)V(a0i64) <  (u64)V(a1i64)); break;
+	case AOslt:       S(ri64) = (i64)(V(a0i64) <  V(a1i64)); break;
+	case AOsltu:      S(ri64) = (i64)((u64)V(a0i64) <  (u64)V(a1i64)); break;
+	case AOseq:       S(ri64) = (i64)(V(a0i64) == V(a1i64)); break;
 
 /* Integer comparisons with remote ALU tos */
 
-	case AOiceq32r0:
-	case AOiceq32r1:
-	case AOiceq32r2:
-	case AOiceq32r3: {
-		v64 a1r = mamalutos(mam, (u8)(o-AOiceq32r0));
-		S(ri64) = (i64)(V(a0i32) == (i32)a1r);
-		break;
-	}
-	case AOiceq64r0:
-	case AOiceq64r1:
-	case AOiceq64r2:
-	case AOiceq64r3: {
-		v64 a1r = mamalutos(mam, (u8)(o-AOiceq64r0));
-		S(ri64) = (i64)(V(a0i64) == (i64)a1r);
-		break;
-	}
-	case AOiclt32r0:
-	case AOiclt32r1:
-	case AOiclt32r2:
-	case AOiclt32r3: {
-		v64 a1r = mamalutos(mam, (u8)(o-AOiclt32r0));
-		S(ri64) = (i64)(V(a0i32) < (i32)a1r);
-		break;
-	}
-	case AOiclt64r0:
-	case AOiclt64r1:
-	case AOiclt64r2:
-	case AOiclt64r3: {
-		v64 a1r = mamalutos(mam, (u8)(o-AOiclt64r0));
+	case AOslt_a0:
+	case AOslt_a1:
+	case AOslt_a2:
+	case AOslt_a3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOslt_a0));
 		S(ri64) = (i64)(V(a0i64) < (i64)a1r);
+		break;
+	}
+	case AOsltu_a0:
+	case AOsltu_a1:
+	case AOsltu_a2:
+	case AOsltu_a3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOsltu_a0));
+		S(ri64) = (i64)((u64)V(a0i64) < (u64)a1r);
+		break;
+	}
+	case AOseq_a0:
+	case AOseq_a1:
+	case AOseq_a2:
+	case AOseq_a3: {
+		v64 a1r = mamalutos(mam, (u8)(o-AOseq_a0));
+		S(ri64) = (i64)(V(a0i64) == (i64)a1r);
 		break;
 	}
 
 /* Extensions and Truncations */
 
-	case AOexts8:     S(ri64) = (i64)(i8)V(a0i64); break;
-	case AOextu8:     S(ri64) = (i64)(u8)V(a0i64); break;
-	case AOexts16:    S(ri64) = (i64)(i16)V(a0i64); break;
-	case AOextu16:    S(ri64) = (i64)(u16)V(a0i64); break;
+	case AOextb:      S(ri64) = (i64)(i8)V(a0i64); break;
+	case AOextub:     S(ri64) = (i64)(u8)V(a0i64); break;
+	case AOexth:      S(ri64) = (i64)(i16)V(a0i64); break;
+	case AOextuh:     S(ri64) = (i64)(u16)V(a0i64); break;
 
-	case AOexts32:    S(ri64) = (i64)(i32)V(a0i64); break;
-	case AOextu32:    S(ri64) = (i64)(u32)V(a0i64); break;
+	case AOextw:      S(ri64) = (i64)(i32)V(a0i64); break;
+	case AOextuw:     S(ri64) = (i64)(u32)V(a0i64); break;
 
 /* Stack read */
-	case AOstk0:      S(r) = stkr(alu, 0); break;
-	case AOstk1:      S(r) = stkr(alu, 1); break;
-	case AOstk2:      S(r) = stkr(alu, 2); break;
-	case AOstk3:      S(r) = stkr(alu, 3); break;
+	case AOrd_s0:     S(r) = stkr(alu, 0); break;
+	case AOrd_s1:     S(r) = stkr(alu, 1); break;
+	case AOrd_s2:     S(r) = stkr(alu, 2); break;
+	case AOrd_s3:     S(r) = stkr(alu, 3); break;
 
 /* Register read */
-	case AOreg0:      S(r) = regr(alu, 0); break;
-	case AOreg1:      S(r) = regr(alu, 1); break;
-	case AOreg2:      S(r) = regr(alu, 2); break;
-	case AOreg3:      S(r) = regr(alu, 3); break;
+	case AOrd_r0:     S(r) = regr(alu, 0); break;
+	case AOrd_r1:     S(r) = regr(alu, 1); break;
+	case AOrd_r2:     S(r) = regr(alu, 2); break;
+	case AOrd_r3:     S(r) = regr(alu, 3); break;
 
 /* Register write popping */
-	case AOregp0:     regw(alu, 0, V(a0)); break;
-	case AOregp1:     regw(alu, 1, V(a0)); break;
-	case AOregp2:     regw(alu, 2, V(a0)); break;
-	case AOregp3:     regw(alu, 3, V(a0)); break;
+	case AOwp_r0:     regw(alu, 0, V(a0)); break;
+	case AOwp_r1:     regw(alu, 1, V(a0)); break;
+	case AOwp_r2:     regw(alu, 2, V(a0)); break;
+	case AOwp_r3:     regw(alu, 3, V(a0)); break;
 
 /* Register write non-popping */
-	case AOregw0:     regw(alu, 0, V(a0)); S(r) = a0; break;
-	case AOregw1:     regw(alu, 1, V(a0)); S(r) = a0; break;
-	case AOregw2:     regw(alu, 2, V(a0)); S(r) = a0; break;
-	case AOregw3:     regw(alu, 3, V(a0)); S(r) = a0; break;
+	case AOwr_r0:     regw(alu, 0, V(a0)); S(r) = a0; break;
+	case AOwr_r1:     regw(alu, 1, V(a0)); S(r) = a0; break;
+	case AOwr_r2:     regw(alu, 2, V(a0)); S(r) = a0; break;
+	case AOwr_r3:     regw(alu, 3, V(a0)); S(r) = a0; break;
 
 /* Remote alu TOS access */
-	case AOalur0:
-	case AOalur1:
-	case AOalur2:
-	case AOalur3:
+	case AOrd_a0:
+	case AOrd_a1:
+	case AOrd_a2:
+	case AOrd_a3:
 
 /* Remote mem value access */
-	case AOmem0v0:
-	case AOmem0v1:
-	case AOmem1v0:
-	case AOmem1v1:    skip = 1; break;
+	case AOrd_m0v0:
+	case AOrd_m0v1:
+	case AOrd_m1v0:
+	case AOrd_m1v1:    skip = 1; break;
 
 /* Select using remote alu condition */
-	case AOselzr0:
-	case AOselzr1:
-	case AOselzr2:
-	case AOselzr3: {
-		v64 c = mamalutos(mam, (u8)(o-AOselzr0));
+	case AOselz_a0:
+	case AOselz_a1:
+	case AOselz_a2:
+	case AOselz_a3: {
+		v64 c = mamalutos(mam, (u8)(o-AOselz_a0));
 		S(r) = c ? V(a1) : V(a0);
 		break;
 	}
-	case AOselnzr0:
-	case AOselnzr1:
-	case AOselnzr2:
-	case AOselnzr3: {
-		v64 c = mamalutos(mam, (u8)(o-AOselnzr0));
+	case AOselnz_a0:
+	case AOselnz_a1:
+	case AOselnz_a2:
+	case AOselnz_a3: {
+		v64 c = mamalutos(mam, (u8)(o-AOselnz_a0));
 		S(r) = c ? V(a0) : V(a1);
 		break;
 	}
 
 /* Icache constants */
-	case AOi8con0:
-	case AOi8con1:
-	case AOi8con2:
-	case AOi8con3:
-	case AOi8con4:
-	case AOi8con5:
-	case AOi8con6:
-	case AOi8con7: {
+	case AOconb0:
+	case AOconb1:
+	case AOconb2:
+	case AOconb3:
+	case AOconb4:
+	case AOconb5:
+	case AOconb6:
+	case AOconb7: {
 		/* sign-extended */
-		S(ri64) = (i64)(i8)ctlicu8(&mam->ctl, (u8)(o-AOi8con0));
+		S(ri64) = (i64)(i8)ctlicu8(&mam->ctl, (u8)(o-AOconb0));
 		break;
 	}
-	case AOi16con0:
-	case AOi16con1:
-	case AOi16con2:
-	case AOi16con3:
-	case AOi16con4:
-	case AOi16con5:
-	case AOi16con6:
-	case AOi16con7: {
+	case AOconh0:
+	case AOconh1:
+	case AOconh2:
+	case AOconh3:
+	case AOconh4:
+	case AOconh5:
+	case AOconh6:
+	case AOconh7: {
 		/* sign-extended */
-		S(ri64) = (i64)(i16)ctlicu16(&mam->ctl, (u8)((o-AOi16con0)*2));
+		S(ri64) = (i64)(i16)ctlicu16(&mam->ctl, (u8)((o-AOconh0)*2));
 		break;
 	}
-	case AOi32con0:
-	case AOi32con1:
-	case AOi32con2:
-	case AOi32con3:
-	case AOi32con4:
-	case AOi32con5:
-	case AOi32con6:
-	case AOi32con7: {
+	case AOconw0:
+	case AOconw1:
+	case AOconw2:
+	case AOconw3:
+	case AOconw4:
+	case AOconw5:
+	case AOconw6:
+	case AOconw7: {
 		/* sign-extended */
-		S(ri64) = (i64)(i32)ctlicu32(&mam->ctl, (u8)((o-AOi32con0)*4));
+		S(ri64) = (i64)(i32)ctlicu32(&mam->ctl, (u8)((o-AOconw0)*4));
 		break;
 	}
-	case AOi64con0:
-	case AOi64con1:
-	case AOi64con2:
-	case AOi64con3:
-	case AOi64con4:
-	case AOi64con5:
-	case AOi64con6:
-	case AOi64con7: {
-		S(ri64) = (i64)ctlicu64(&mam->ctl, (u8)((o-AOi64con0)*8));
+	case AOcond0:
+	case AOcond1:
+	case AOcond2:
+	case AOcond3:
+	case AOcond4:
+	case AOcond5:
+	case AOcond6:
+	case AOcond7: {
+		S(ri64) = (i64)ctlicu64(&mam->ctl, (u8)((o-AOcond0)*8));
 		break;
 	}
 
@@ -387,16 +353,16 @@ void aluexe1(Mam *mam, Alu *alu, AO o) {
 	switch (o) {
 
 /* Remote alu TOS access */
-	case AOalur0:   S(r) = mamalutos(mam, 0); break;
-	case AOalur1:   S(r) = mamalutos(mam, 1); break;
-	case AOalur2:   S(r) = mamalutos(mam, 2); break;
-	case AOalur3:   S(r) = mamalutos(mam, 3); break;
+	case AOrd_a0:   S(r) = mamalutos(mam, 0); break;
+	case AOrd_a1:   S(r) = mamalutos(mam, 1); break;
+	case AOrd_a2:   S(r) = mamalutos(mam, 2); break;
+	case AOrd_a3:   S(r) = mamalutos(mam, 3); break;
 
 /* Remote mem value access */
-	case AOmem0v0: S(r) = mammemv(mam, 0, 0); break;
-	case AOmem0v1: S(r) = mammemv(mam, 0, 1); break;
-	case AOmem1v0: S(r) = mammemv(mam, 1, 0); break;
-	case AOmem1v1: S(r) = mammemv(mam, 1, 1); break;
+	case AOrd_m0v0: S(r) = mammemv(mam, 0, 0); break;
+	case AOrd_m0v1: S(r) = mammemv(mam, 0, 1); break;
+	case AOrd_m1v0: S(r) = mammemv(mam, 1, 0); break;
+	case AOrd_m1v1: S(r) = mammemv(mam, 1, 1); break;
 
 	default: skip = 1; break;
 

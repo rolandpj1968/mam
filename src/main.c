@@ -2,13 +2,13 @@
 
 static void encadd0to7slow(CLine *ic) {
 	EncIns ei[7] = {
-		{B(AOi8con0, AOi8con1, AOi8con2, AOi8con3), {{1,1,1,1,0,0,0,0}}, {{0,2,4,6,0,0,0,0}}},
-		{B(AOi8con4, AOi8con5, AOi8con6, AOi8con7), {{0,0,0,0,1,1,1,1}}, {{0,0,0,0,1,3,5,7}}},
-		{B(AOiadd32, AOiadd32, AOiadd32, AOiadd32), {{0}}, {{0}}},
-		{B(AOalur1,  AOnop,    AOalur3,  AOnop),    {{0}}, {{0}}},
-		{B(AOiadd32, AOnop,    AOiadd32, AOnop),    {{0}}, {{0}}},
-		{B(AOalur2,  AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
-		{B(AOiadd32, AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
+		{B(AOconb0, AOconb1, AOconb2, AOconb3), {{1,1,1,1,0,0,0,0}}, {{0,2,4,6,0,0,0,0}}},
+		{B(AOconb4, AOconb5, AOconb6, AOconb7), {{0,0,0,0,1,1,1,1}}, {{0,0,0,0,1,3,5,7}}},
+		{B(AOaddw, AOaddw, AOaddw, AOaddw), {{0}}, {{0}}},
+		{B(AOrd_a1,  AOnop,    AOrd_a3,  AOnop),    {{0}}, {{0}}},
+		{B(AOaddw, AOnop,    AOaddw, AOnop),    {{0}}, {{0}}},
+		{B(AOrd_a2,  AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
+		{B(AOaddw, AOnop,    AOnop,    AOnop),    {{0}}, {{0}}},
 	};
 	dumpeis(ei, 7);
 	printf("\n");
@@ -37,18 +37,19 @@ static void runadd0to7slow() {
 }
 
 #if 0
+
 static void add0to7slow(Mam *mam) {
 	wricu8(&mam->ctl.ic, 0, (u8)4);
 	wricu8(&mam->ctl.ic, 1, (u8)5);
 	wricu8(&mam->ctl.ic, 2, (u8)6);
 	wricu8(&mam->ctl.ic, 3, (u8)7);
-	mamexei(mam, I(AOlit0,   AOlit2,   AOi8con0, AOi8con2));
-	mamexei(mam, I(AOlit1,   AOlit3,   AOi8con1, AOi8con3));
-	mamexei(mam, I(AOiadd32, AOiadd32, AOiadd32, AOiadd32));
-	mamexei(mam, I(AOalur1,  AOnop,    AOalur3,  AOnop));
-	mamexei(mam, I(AOiadd32, AOnop,    AOiadd32, AOnop));
-	mamexei(mam, I(AOalur2,  AOnop,    AOnop,    AOnop));
-	mamexei(mam, I(AOiadd32, AOnop,    AOnop,    AOnop));
+	mamexei(mam, I(AOlit0,   AOlit2,   AOconb0, AOconb2));
+	mamexei(mam, I(AOlit1,   AOlit3,   AOconb1, AOconb3));
+	mamexei(mam, I(AOaddw, AOaddw, AOaddw, AOaddw));
+	mamexei(mam, I(AOrd_a1,  AOnop,    AOrd_a3,  AOnop));
+	mamexei(mam, I(AOaddw, AOnop,    AOaddw, AOnop));
+	mamexei(mam, I(AOrd_a2,  AOnop,    AOnop,    AOnop));
+	mamexei(mam, I(AOaddw, AOnop,    AOnop,    AOnop));
 
 	printf("\n\nsum{0..7} = %lu\n\n", mamalutos(mam, 0));
 }
@@ -58,11 +59,11 @@ static void add0to7fast(Mam *mam) {
 	wricu8(&mam->ctl.ic, 1, (u8)5);
 	wricu8(&mam->ctl.ic, 2, (u8)6);
 	wricu8(&mam->ctl.ic, 3, (u8)7);
-	mamexei(mam, I(AOlit0,     AOlit2,   AOi8con0,   AOi8con2));
-	mamexei(mam, I(AOlit1,     AOlit3,   AOi8con1,   AOi8con3));
-	mamexei(mam, I(AOiadd32,   AOiadd32, AOiadd32,   AOiadd32));
-	mamexei(mam, I(AOiadd32r1, AOnop,    AOiadd32r3, AOnop));
-	mamexei(mam, I(AOiadd32r2, AOnop,    AOnop,      AOnop));
+	mamexei(mam, I(AOlit0,     AOlit2,   AOconb0,   AOconb2));
+	mamexei(mam, I(AOlit1,     AOlit3,   AOconb1,   AOconb3));
+	mamexei(mam, I(AOaddw,   AOaddw, AOaddw,   AOaddw));
+	mamexei(mam, I(AOaddwr1, AOnop,    AOaddwr3, AOnop));
+	mamexei(mam, I(AOaddwr2, AOnop,    AOnop,      AOnop));
 
 	printf("\n\nsum{0..7} = %lu\n\n", mamalutos(mam, 0));
 }
@@ -72,13 +73,13 @@ static void addm1tom8slow(Mam *mam) {
 	wricu8(&mam->ctl.ic, 2, (u8)-6);
 	wricu8(&mam->ctl.ic, 3, (u8)-7);
 	wricu8(&mam->ctl.ic, 0, (u8)-8);
-	mamexei(mam, I(AOlitm1,  AOlitm3,  AOi8con0, AOi8con2));
-	mamexei(mam, I(AOlitm2,  AOlitm4,  AOi8con1, AOi8con3));
-	mamexei(mam, I(AOiadd32, AOiadd32, AOiadd32, AOiadd32));
-	mamexei(mam, I(AOalur1,  AOnop,    AOalur3,  AOnop));
-	mamexei(mam, I(AOiadd32, AOnop,    AOiadd32, AOnop));
-	mamexei(mam, I(AOalur2,  AOnop,    AOnop,    AOnop));
-	mamexei(mam, I(AOiadd32, AOnop,    AOnop,    AOnop));
+	mamexei(mam, I(AOlitm1,  AOlitm3,  AOconb0, AOconb2));
+	mamexei(mam, I(AOlitm2,  AOlitm4,  AOconb1, AOconb3));
+	mamexei(mam, I(AOaddw, AOaddw, AOaddw, AOaddw));
+	mamexei(mam, I(AOrd_a1,  AOnop,    AOrd_a3,  AOnop));
+	mamexei(mam, I(AOaddw, AOnop,    AOaddw, AOnop));
+	mamexei(mam, I(AOrd_a2,  AOnop,    AOnop,    AOnop));
+	mamexei(mam, I(AOaddw, AOnop,    AOnop,    AOnop));
 
 	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
 }
@@ -88,11 +89,11 @@ static void addm1tom8fast(Mam *mam) {
 	wricu8(&mam->ctl.ic, 2, (u8)-6);
 	wricu8(&mam->ctl.ic, 3, (u8)-7);
 	wricu8(&mam->ctl.ic, 0, (u8)-8);
-	mamexei(mam, I(AOlitm1,    AOlitm3,  AOi8con0,   AOi8con2));
-	mamexei(mam, I(AOlitm2,    AOlitm4,  AOi8con1,   AOi8con3));
-	mamexei(mam, I(AOiadd32,   AOiadd32, AOiadd32,   AOiadd32));
-	mamexei(mam, I(AOiadd32r1, AOnop,    AOiadd32r3, AOnop));
-	mamexei(mam, I(AOiadd32r2, AOnop,    AOnop,      AOnop));
+	mamexei(mam, I(AOlitm1,    AOlitm3,  AOconb0,   AOconb2));
+	mamexei(mam, I(AOlitm2,    AOlitm4,  AOconb1,   AOconb3));
+	mamexei(mam, I(AOaddw,   AOaddw, AOaddw,   AOaddw));
+	mamexei(mam, I(AOaddwr1, AOnop,    AOaddwr3, AOnop));
+	mamexei(mam, I(AOaddwr2, AOnop,    AOnop,      AOnop));
 
 	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
 }
@@ -104,9 +105,9 @@ static void addm1tom8fast16(Mam *mam) {
 	wricu16(&mam->ctl.ic, 0, (u16)-8);
 	mamexei(mam, I(AOlitm1,    AOlitm3,  AOi16con0,   AOi16con2));
 	mamexei(mam, I(AOlitm2,    AOlitm4,  AOi16con1,   AOi16con3));
-	mamexei(mam, I(AOiadd32,   AOiadd32, AOiadd32,   AOiadd32));
-	mamexei(mam, I(AOiadd32r1, AOnop,    AOiadd32r3, AOnop));
-	mamexei(mam, I(AOiadd32r2, AOnop,    AOnop,      AOnop));
+	mamexei(mam, I(AOaddw,   AOaddw, AOaddw,   AOaddw));
+	mamexei(mam, I(AOaddwr1, AOnop,    AOaddwr3, AOnop));
+	mamexei(mam, I(AOaddwr2, AOnop,    AOnop,      AOnop));
 
 	printf("\n\nsum{-1..-8} = %ld\n\n", mamalutos(mam, 0));
 }
